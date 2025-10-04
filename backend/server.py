@@ -176,45 +176,19 @@ async def get_historical_data(symbol: str, asset_type: str):
     """Get 1 week historical data for an asset"""
     try:
         if asset_type == "crypto":
-            # For crypto, use CoinGecko historical API
-            coin_id_map = {
-                "BTC": "bitcoin", "ETH": "ethereum", "BNB": "binancecoin",
-                "SOL": "solana", "XRP": "ripple", "USDC": "usd-coin", 
-                "ADA": "cardano", "USDT": "tether"
+            # Primary approach: Use yfinance for crypto (more reliable)
+            crypto_symbols = {
+                "BTC": "BTC-USD", "ETH": "ETH-USD", "BNB": "BNB-USD",
+                "SOL": "SOL-USD", "XRP": "XRP-USD", "ADA": "ADA-USD",
+                "USDT": "USDT-USD", "USDC": "USDC-USD"
             }
-            coin_id = coin_id_map.get(symbol.upper(), "bitcoin")  # Default to bitcoin
+            yf_symbol = crypto_symbols.get(symbol.upper(), "BTC-USD")
             
-            url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
-            params = {"vs_currency": "usd", "days": 7, "interval": "daily"}  # Changed to daily
-            
-            response = requests.get(url, params=params, timeout=15)
-            if response.status_code == 200:
-                data = response.json()
-                if 'prices' in data and data['prices']:
-                    historical = []
-                    for price_point in data['prices']:
-                        timestamp = datetime.fromtimestamp(price_point[0] / 1000, tz=timezone.utc)
-                        historical.append(HistoricalData(
-                            timestamp=timestamp.isoformat(),
-                            price=round(price_point[1], 2)
-                        ))
-                    return historical
-                else:
-                    logging.error(f"No price data in CoinGecko response for {coin_id}")
-                    return []
-            else:
-                logging.error(f"CoinGecko API error {response.status_code} for {coin_id}")
-                # Fallback to yfinance for crypto
-                try:
-                    crypto_symbols = {
-                        "BTC": "BTC-USD", "ETH": "ETH-USD", "BNB": "BNB-USD",
-                        "SOL": "SOL-USD", "XRP": "XRP-USD", "ADA": "ADA-USD",
-                        "USDT": "USDT-USD", "USDC": "USDC-USD"
-                    }
-                    yf_symbol = crypto_symbols.get(symbol.upper(), "BTC-USD")
-                    ticker = yf.Ticker(yf_symbol)
-                    hist = ticker.history(period="7d")
-                    
+            try:
+                ticker = yf.Ticker(yf_symbol)
+                hist = ticker.history(period="7d")
+                
+                if not hist.empty:
                     historical = []
                     for index, row in hist.iterrows():
                         historical.append(HistoricalData(
@@ -222,9 +196,40 @@ async def get_historical_data(symbol: str, asset_type: str):
                             price=round(row['Close'], 2)
                         ))
                     return historical
-                except Exception as yf_error:
-                    logging.error(f"YFinance fallback failed for {symbol}: {yf_error}")
-                    return []
+            except Exception as yf_error:
+                logging.error(f"YFinance failed for {symbol}: {yf_error}")
+            
+            # Fallback to CoinGecko if yfinance fails
+            coin_id_map = {
+                "BTC": "bitcoin", "ETH": "ethereum", "BNB": "binancecoin",
+                "SOL": "solana", "XRP": "ripple", "USDC": "usd-coin", 
+                "ADA": "cardano", "USDT": "tether"
+            }
+            coin_id = coin_id_map.get(symbol.upper(), "bitcoin")
+            
+            try:
+                url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/market_chart"
+                params = {"vs_currency": "usd", "days": 7, "interval": "daily"}
+                
+                response = requests.get(url, params=params, timeout=10)
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'prices' in data and data['prices']:
+                        historical = []
+                        for price_point in data['prices']:
+                            timestamp = datetime.fromtimestamp(price_point[0] / 1000, tz=timezone.utc)
+                            historical.append(HistoricalData(
+                                timestamp=timestamp.isoformat(),
+                                price=round(price_point[1], 2)
+                            ))
+                        return historical
+                else:
+                    logging.error(f"CoinGecko API error {response.status_code} for {coin_id}")
+            except Exception as cg_error:
+                logging.error(f"CoinGecko fallback failed for {symbol}: {cg_error}")
+                
+            return []  # Return empty if all methods fail
+            
         else:
             # For currencies and metals, use yfinance
             ticker = yf.Ticker(symbol)
