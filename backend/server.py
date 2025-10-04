@@ -920,9 +920,18 @@ async def get_betty_history():
             total_predictions += week_data["total_count"]
             cumulative_accuracy = (total_correct / total_predictions) * 100
             
+            # Clean predictions for JSON serialization
+            clean_predictions = []
+            for pred in week_data["predictions"]:
+                clean_pred = {k: v for k, v in pred.items() if k != "_id"}
+                # Convert datetime to ISO string
+                if "week_start" in clean_pred and hasattr(clean_pred["week_start"], "isoformat"):
+                    clean_pred["week_start"] = clean_pred["week_start"].isoformat()
+                clean_predictions.append(clean_pred)
+            
             weekly_results.append({
                 "week_start": week_data["week_start"].strftime("%Y-%m-%d"),
-                "predictions": week_data["predictions"],
+                "predictions": clean_predictions,
                 "correct_count": week_data["correct_count"],
                 "total_count": week_data["total_count"],
                 "week_accuracy": round(week_accuracy, 1),
