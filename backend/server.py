@@ -599,7 +599,7 @@ async def get_currencies():
 
 @api_router.get("/crypto", response_model=List[AssetPrice])
 async def get_crypto():
-    """Get top 7 cryptocurrencies"""
+    """Get specific cryptocurrencies (BTC, ETH, BNB, SOL, XRP, DOT, ADA, DOGE)"""
     cache_key = "crypto"
     
     if is_cache_expired(data_cache[cache_key]["last_updated"]):
