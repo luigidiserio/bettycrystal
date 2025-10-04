@@ -731,14 +731,14 @@ function App() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-slate-900/80 border-t border-slate-700 mt-16">
+      <footer className="bg-gradient-to-r from-slate-900/90 via-emerald-950/10 to-slate-900/90 border-t border-emerald-800/20 mt-16">
         <div className="container mx-auto px-6 py-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* About Betty Crystal */}
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <BettyCharacter size="small" />
-                <h3 className="text-xl font-bold text-white">About Betty Crystal</h3>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-300 to-teal-300 bg-clip-text text-transparent">About Betty Crystal</h3>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed mb-4">
                 Betty Crystal is your friendly AI trading mentor who combines advanced market analysis 
