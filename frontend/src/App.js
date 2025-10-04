@@ -528,10 +528,10 @@ function App() {
         <div className="grid grid-cols-1 gap-8">
           <div>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-700">
+              <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-emerald-700/30">
                 <TabsTrigger 
                   value="crypto" 
-                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white flex items-center gap-2"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-teal-500 data-[state=active]:text-white flex items-center gap-2"
                   data-testid="crypto-tab"
                 >
                   <Bitcoin className="w-4 h-4" />
@@ -539,7 +539,7 @@ function App() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="currencies"
-                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white flex items-center gap-2"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-orange-500 data-[state=active]:text-white flex items-center gap-2"
                   data-testid="currencies-tab"
                 >
                   <DollarSign className="w-4 h-4" />
@@ -547,7 +547,7 @@ function App() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="metals"
-                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white flex items-center gap-2"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-amber-500 data-[state=active]:text-white flex items-center gap-2"
                   data-testid="metals-tab"
                 >
                   <Gem className="w-4 h-4" />
