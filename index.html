@@ -709,6 +709,10 @@
             // Set initial active tab
             switchTab('crypto');
             
+            // Initialize auth UI
+            updateAuthUI();
+            hidePremiumContent();
+            
             // Fetch initial data
             fetchMarketData();
             fetchBettyData();
