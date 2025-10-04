@@ -564,27 +564,78 @@ function App() {
                     <div className="mb-4 p-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg">
                       <p className="text-emerald-400 text-sm flex items-center gap-2">
                         <Crown className="w-4 h-4" />
-                        Premium Access Unlocked! Welcome {user.name}
+                        Premium Access Unlocked! Welcome {user.username || user.name}
                       </p>
                     </div>
-                    <p className="text-sm text-slate-300 mb-3">Betty's specific picks with exact targets:</p>
-                    {bettyDemoPredictions.map((prediction) => (
-                      <BettyDemoPredictionCard key={prediction.id} prediction={prediction} />
-                    ))}
-                    <div className="mt-4 text-center">
-                      <Button 
-                        onClick={fetchBettyPredictions}
-                        disabled={loadingBetty}
-                        className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600"
-                      >
-                        {loadingBetty ? (
-                          <Activity className="w-4 h-4 mr-2 animate-spin" />
-                        ) : (
-                          <Zap className="w-4 h-4 mr-2" />
+                    
+                    {/* Different content based on user level */}
+                    {user.username === 'betty' ? (
+                      // Master access - show everything
+                      <div>
+                        <p className="text-sm text-slate-300 mb-3">Betty's Master Dashboard - Full Access:</p>
+                        
+                        {/* Current Week Predictions */}
+                        <div className="mb-6">
+                          <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                            <Target className="w-4 h-4 text-cyan-400" />
+                            Week 3 Predictions (October 2025)
+                          </h4>
+                          {bettyDemoPredictions.map((prediction) => (
+                            <BettyDemoPredictionCard key={prediction.id} prediction={prediction} />
+                          ))}
+                        </div>
+                        
+                        {/* Historical Performance */}
+                        {bettyHistory && (
+                          <div className="mb-4">
+                            <h4 className="text-white font-semibold mb-3">📈 Historical Performance</h4>
+                            <div className="space-y-3">
+                              {bettyHistory.weekly_results.slice(0, 2).map((week, index) => (
+                                <div key={week.week_start} className="p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm font-medium text-white">
+                                      Week {index === 0 ? '2' : '1'} ({new Date(week.week_start).toLocaleDateString()})
+                                    </span>
+                                    <span className={`text-sm font-bold ${week.week_accuracy >= 70 ? 'text-emerald-400' : 'text-yellow-400'}`}>
+                                      {week.correct_count}/{week.total_count} ({week.week_accuracy}%)
+                                    </span>
+                                  </div>
+                                  <div className="text-xs text-slate-400">
+                                    Cumulative: {week.cumulative_accuracy}%
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         )}
-                        {loadingBetty ? 'Getting Live Predictions...' : 'Get This Week\'s Live Predictions'}
-                      </Button>
-                    </div>
+                        
+                        <div className="mt-4 text-center">
+                          <Button 
+                            onClick={fetchBettyPredictions}
+                            disabled={loadingBetty}
+                            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                          >
+                            {loadingBetty ? (
+                              <Activity className="w-4 h-4 mr-2 animate-spin" />
+                            ) : (
+                              <Zap className="w-4 h-4 mr-2" />
+                            )}
+                            {loadingBetty ? 'Refreshing Data...' : 'Refresh Live Data'}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      // Demo access - show interface without picks
+                      <div>
+                        <p className="text-sm text-slate-300 mb-3">Demo Account - Preview Interface:</p>
+                        <div className="p-6 bg-slate-800/30 border-2 border-dashed border-slate-600 rounded-lg text-center">
+                          <Lock className="w-8 h-8 text-slate-500 mx-auto mb-3" />
+                          <p className="text-slate-400 mb-2">Demo Mode - Premium Features Locked</p>
+                          <p className="text-xs text-slate-500">This is what the premium interface looks like.</p>
+                          <p className="text-xs text-slate-500">Upgrade to see Betty's actual picks and historical data.</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-6">
