@@ -210,11 +210,14 @@ async def fetch_currencies():
 async def fetch_crypto():
     """Fetch top 7 cryptocurrencies from CoinGecko"""
     try:
-        url = "https://api.coingecko.com/api/v3/coins/markets"
+        # Get specific coins instead of top 7 by market cap
+        coin_ids = "bitcoin,ethereum,binancecoin,solana,ripple,polkadot,cardano,dogecoin"
+        url = f"https://api.coingecko.com/api/v3/coins/markets"
         params = {
             "vs_currency": "usd",
+            "ids": coin_ids,
             "order": "market_cap_desc",
-            "per_page": 7,
+            "per_page": 8,
             "page": 1,
             "sparkline": False,
             "price_change_percentage": "24h"
