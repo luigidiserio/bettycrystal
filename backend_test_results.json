@@ -1,0 +1,72 @@
+{
+  "timestamp": "2025-10-04T16:54:43.003921",
+  "total_tests": 9,
+  "passed_tests": 9,
+  "success_rate": 100.0,
+  "overall_success": true,
+  "detailed_results": [
+    {
+      "test_name": "API Health Check",
+      "success": true,
+      "details": "API version: 1.0.0",
+      "timestamp": "2025-10-04T16:54:26.238796",
+      "response_data": null
+    },
+    {
+      "test_name": "Currencies Endpoint",
+      "success": true,
+      "details": "Found 7 currencies, CAD included, all required fields present",
+      "timestamp": "2025-10-04T16:54:26.274221",
+      "response_data": null
+    },
+    {
+      "test_name": "Crypto Endpoint",
+      "success": true,
+      "details": "Found 7 cryptos, major cryptos included, all required fields present",
+      "timestamp": "2025-10-04T16:54:26.311670",
+      "response_data": null
+    },
+    {
+      "test_name": "Metals Endpoint",
+      "success": true,
+      "details": "Found 4 metals, all required metals included, all required fields present",
+      "timestamp": "2025-10-04T16:54:26.345567",
+      "response_data": null
+    },
+    {
+      "test_name": "Historical Data (BTC)",
+      "success": true,
+      "details": "Found 7 historical data points for BTC",
+      "timestamp": "2025-10-04T16:54:26.476657",
+      "response_data": null
+    },
+    {
+      "test_name": "Historical Data (CADUSD=X)",
+      "success": true,
+      "details": "Found 8 historical data points for CADUSD=X",
+      "timestamp": "2025-10-04T16:54:26.633957",
+      "response_data": null
+    },
+    {
+      "test_name": "Historical Data (GC=F)",
+      "success": true,
+      "details": "Found 6 historical data points for GC=F",
+      "timestamp": "2025-10-04T16:54:26.745767",
+      "response_data": null
+    },
+    {
+      "test_name": "AI Prediction (BTC)",
+      "success": true,
+      "details": "AI prediction generated for BTC with all timeframes and analysis",
+      "timestamp": "2025-10-04T16:54:31.209710",
+      "response_data": null
+    },
+    {
+      "test_name": "AI Prediction (CADUSD=X)",
+      "success": true,
+      "details": "AI prediction generated for CADUSD=X with all timeframes and analysis",
+      "timestamp": "2025-10-04T16:54:43.003043",
+      "response_data": null
+    }
+  ]
+}
