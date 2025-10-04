@@ -391,7 +391,7 @@ function App() {
                 </div>
               ) : (
                 <Button 
-                  onClick={handleLogin}
+                  onClick={handleShowLogin}
                   className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
                 >
                   Sign In
