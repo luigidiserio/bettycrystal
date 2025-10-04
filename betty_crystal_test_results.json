@@ -1,86 +1,100 @@
 {
-  "timestamp": "2025-10-04T21:09:07.666297",
-  "total_tests": 11,
-  "passed_tests": 10,
-  "success_rate": 90.9090909090909,
-  "overall_success": false,
+  "timestamp": "2025-10-04T21:09:23.699512",
+  "total_tests": 13,
+  "passed_tests": 12,
+  "success_rate": 92.3076923076923,
+  "overall_success": true,
   "detailed_results": [
     {
       "test_name": "API Health Check",
       "success": true,
       "details": "API version: 2.0.0",
-      "timestamp": "2025-10-04T21:09:07.533927",
+      "timestamp": "2025-10-04T21:09:23.461858",
       "response_data": null
     },
     {
       "test_name": "Currencies Endpoint",
       "success": true,
       "details": "Found 7 currencies, CAD included, all required fields present",
-      "timestamp": "2025-10-04T21:09:07.535336",
+      "timestamp": "2025-10-04T21:09:23.463256",
       "response_data": null
     },
     {
       "test_name": "Crypto Endpoint",
       "success": true,
       "details": "Found 8 cryptos, major cryptos included, all required fields present",
-      "timestamp": "2025-10-04T21:09:07.536637",
+      "timestamp": "2025-10-04T21:09:23.464431",
       "response_data": null
     },
     {
       "test_name": "Metals Endpoint",
       "success": true,
       "details": "Found 4 metals, all required metals included, all required fields present",
-      "timestamp": "2025-10-04T21:09:07.537739",
+      "timestamp": "2025-10-04T21:09:23.465506",
       "response_data": null
     },
     {
       "test_name": "Historical Data Endpoint (BTC)",
       "success": true,
       "details": "BTC historical data: 24 data points, period: 24h",
-      "timestamp": "2025-10-04T21:09:07.610168",
+      "timestamp": "2025-10-04T21:09:23.575784",
       "response_data": null
     },
     {
       "test_name": "Prediction Endpoint (BTC)",
       "success": true,
       "details": "BTC prediction generated: Medium confidence, 57.4% probability",
-      "timestamp": "2025-10-04T21:09:07.657569",
+      "timestamp": "2025-10-04T21:09:23.683571",
       "response_data": null
     },
     {
       "test_name": "Betty Current Week Status",
       "success": true,
       "details": "Betty status: This week's predictions available, Has predictions: True",
-      "timestamp": "2025-10-04T21:09:07.661058",
+      "timestamp": "2025-10-04T21:09:23.686821",
       "response_data": null
     },
     {
       "test_name": "Betty History Endpoint",
       "success": true,
       "details": "Betty history: 83.3% accuracy, 6 total predictions, 2 weeks",
-      "timestamp": "2025-10-04T21:09:07.663050",
+      "timestamp": "2025-10-04T21:09:23.688695",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions Auth Protection",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:09:07.664102",
+      "timestamp": "2025-10-04T21:09:23.689756",
       "response_data": null
     },
     {
       "test_name": "Auth Me Without Token",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:09:07.665033",
+      "timestamp": "2025-10-04T21:09:23.690701",
       "response_data": null
     },
     {
       "test_name": "Create Test Session",
+      "success": true,
+      "details": "Test user registered and logged in: testuser1759612163",
+      "timestamp": "2025-10-04T21:09:23.694340",
+      "response_data": null
+    },
+    {
+      "test_name": "Auth Me Endpoint",
       "success": false,
-      "details": "Failed to register user: 422",
-      "timestamp": "2025-10-04T21:09:07.666133",
-      "response_data": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"username\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"email\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"password\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}"
+      "details": "User data missing required fields",
+      "timestamp": "2025-10-04T21:09:23.695892",
+      "response_data": "{\"_id\":\"78ecd976-d15d-4608-9f9a-2b34613a5d50\",\"username\":\"testuser1759612163\",\"email\":\"test.user.1759612163@example.com\",\"is_premium\":false,\"created_at\":\"2025-10-04T21:09:23.691000\"}"
+    },
+    {
+      "test_name": "Betty Predictions with Auth",
+      "success": true,
+      "details": "Betty generated 3 predictions with full reasoning",
+      "timestamp": "2025-10-04T21:09:23.699366",
+      "response_data": null
     }
   ]
 }
