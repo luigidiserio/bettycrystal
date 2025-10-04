@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-10-04T21:08:16.153874",
+  "timestamp": "2025-10-04T21:08:40.650101",
   "total_tests": 13,
   "passed_tests": 11,
   "success_rate": 84.61538461538461,
@@ -9,91 +9,91 @@
       "test_name": "API Health Check",
       "success": true,
       "details": "API version: 2.0.0",
-      "timestamp": "2025-10-04T21:08:16.002049",
+      "timestamp": "2025-10-04T21:08:40.460823",
       "response_data": null
     },
     {
       "test_name": "Currencies Endpoint",
       "success": true,
       "details": "Found 7 currencies, CAD included, all required fields present",
-      "timestamp": "2025-10-04T21:08:16.003547",
+      "timestamp": "2025-10-04T21:08:40.462113",
       "response_data": null
     },
     {
       "test_name": "Crypto Endpoint",
       "success": true,
       "details": "Found 8 cryptos, major cryptos included, all required fields present",
-      "timestamp": "2025-10-04T21:08:16.004806",
+      "timestamp": "2025-10-04T21:08:40.463293",
       "response_data": null
     },
     {
       "test_name": "Metals Endpoint",
       "success": true,
       "details": "Found 4 metals, all required metals included, all required fields present",
-      "timestamp": "2025-10-04T21:08:16.006022",
+      "timestamp": "2025-10-04T21:08:40.464382",
       "response_data": null
     },
     {
       "test_name": "Historical Data Endpoint (BTC)",
       "success": true,
       "details": "BTC historical data: 24 data points, period: 24h",
-      "timestamp": "2025-10-04T21:08:16.069243",
+      "timestamp": "2025-10-04T21:08:40.569363",
       "response_data": null
     },
     {
       "test_name": "Prediction Endpoint (BTC)",
       "success": true,
       "details": "BTC prediction generated: Medium confidence, 57.4% probability",
-      "timestamp": "2025-10-04T21:08:16.118626",
+      "timestamp": "2025-10-04T21:08:40.637694",
       "response_data": null
     },
     {
       "test_name": "Betty Current Week Status",
       "success": true,
       "details": "Betty status: This week's predictions available, Has predictions: True",
-      "timestamp": "2025-10-04T21:08:16.122171",
+      "timestamp": "2025-10-04T21:08:40.640951",
       "response_data": null
     },
     {
       "test_name": "Betty History Endpoint",
       "success": true,
       "details": "Betty history: 83.3% accuracy, 6 total predictions, 2 weeks",
-      "timestamp": "2025-10-04T21:08:16.124231",
+      "timestamp": "2025-10-04T21:08:40.642879",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions Auth Protection",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:08:16.125386",
+      "timestamp": "2025-10-04T21:08:40.643926",
       "response_data": null
     },
     {
       "test_name": "Auth Me Without Token",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:08:16.126464",
+      "timestamp": "2025-10-04T21:08:40.644835",
       "response_data": null
     },
     {
       "test_name": "Create Test Session",
       "success": true,
       "details": "Test session created for user: Test User",
-      "timestamp": "2025-10-04T21:08:16.144204",
+      "timestamp": "2025-10-04T21:08:40.646839",
       "response_data": null
     },
     {
       "test_name": "Auth Me Endpoint",
       "success": false,
       "details": "Status code: 500",
-      "timestamp": "2025-10-04T21:08:16.146140",
+      "timestamp": "2025-10-04T21:08:40.648298",
       "response_data": "Internal Server Error"
     },
     {
       "test_name": "Betty Predictions with Auth",
       "success": false,
       "details": "Status code: 500",
-      "timestamp": "2025-10-04T21:08:16.153724",
+      "timestamp": "2025-10-04T21:08:40.649947",
       "response_data": "Internal Server Error"
     }
   ]
