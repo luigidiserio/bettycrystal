@@ -73,11 +73,19 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setBettyPredictions(null);
-    setShowBettyPredictions(false);
-    setShowLoginForm(false);
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API}/auth/logout`, {}, {
+        withCredentials: true
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setBettyPredictions(null);
+      setShowBettyPredictions(false);
+      setShowLoginForm(false);
+    }
   };
 
   const handleLoginFormChange = (e) => {
