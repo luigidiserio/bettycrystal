@@ -116,6 +116,9 @@ backend:
       - working: true
         agent: "main"
         comment: "Implemented /api/historical/{symbol} endpoint with yfinance integration. Successfully returning 24h of hourly data with timestamps."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: BTC historical data endpoint working perfectly. Returns 24 data points with timestamps and prices for 24h period. All required fields present."
   
   - task: "Asset prediction endpoint" 
     implemented: true
@@ -128,6 +131,45 @@ backend:
       - working: true
         agent: "main" 
         comment: "Implemented /api/predict/{symbol} endpoint with LLM analysis. Returns AI predictions with probability scores and timeframe analysis."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: BTC prediction endpoint working perfectly. AI generates detailed analysis with confidence levels, probability scores, and timeframe predictions. LLM integration functional."
+
+  - task: "Market data endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: All market data endpoints working perfectly. /api/crypto returns 8 cryptos including BTC/ETH with current prices ~$121K/$4.4K. /api/currencies includes CAD. /api/metals includes all precious metals. All responses JSON serializable."
+
+  - task: "Betty Crystal endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Betty Crystal endpoints fully functional. /api/betty/history shows 83.3% accuracy with 6 predictions across 2 weeks. /api/betty/current-week returns proper status. /api/betty/predictions (auth required) generates 3 AI predictions with full reasoning. All responses properly JSON serialized."
+
+  - task: "Authentication endpoints"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Authentication system working correctly. /api/auth/me returns 401 without token as expected. User registration/login flow functional. Protected endpoints properly secured. Session management working."
 
 frontend:
   - task: "Asset analysis charts display"
