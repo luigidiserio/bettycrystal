@@ -1,99 +1,99 @@
 {
-  "timestamp": "2025-10-04T21:09:23.699512",
+  "timestamp": "2025-10-04T21:09:36.502791",
   "total_tests": 13,
-  "passed_tests": 12,
-  "success_rate": 92.3076923076923,
+  "passed_tests": 13,
+  "success_rate": 100.0,
   "overall_success": true,
   "detailed_results": [
     {
       "test_name": "API Health Check",
       "success": true,
       "details": "API version: 2.0.0",
-      "timestamp": "2025-10-04T21:09:23.461858",
+      "timestamp": "2025-10-04T21:09:36.366993",
       "response_data": null
     },
     {
       "test_name": "Currencies Endpoint",
       "success": true,
       "details": "Found 7 currencies, CAD included, all required fields present",
-      "timestamp": "2025-10-04T21:09:23.463256",
+      "timestamp": "2025-10-04T21:09:36.368288",
       "response_data": null
     },
     {
       "test_name": "Crypto Endpoint",
       "success": true,
       "details": "Found 8 cryptos, major cryptos included, all required fields present",
-      "timestamp": "2025-10-04T21:09:23.464431",
+      "timestamp": "2025-10-04T21:09:36.369407",
       "response_data": null
     },
     {
       "test_name": "Metals Endpoint",
       "success": true,
       "details": "Found 4 metals, all required metals included, all required fields present",
-      "timestamp": "2025-10-04T21:09:23.465506",
+      "timestamp": "2025-10-04T21:09:36.370488",
       "response_data": null
     },
     {
       "test_name": "Historical Data Endpoint (BTC)",
       "success": true,
       "details": "BTC historical data: 24 data points, period: 24h",
-      "timestamp": "2025-10-04T21:09:23.575784",
+      "timestamp": "2025-10-04T21:09:36.440157",
       "response_data": null
     },
     {
       "test_name": "Prediction Endpoint (BTC)",
       "success": true,
       "details": "BTC prediction generated: Medium confidence, 57.4% probability",
-      "timestamp": "2025-10-04T21:09:23.683571",
+      "timestamp": "2025-10-04T21:09:36.488127",
       "response_data": null
     },
     {
       "test_name": "Betty Current Week Status",
       "success": true,
       "details": "Betty status: This week's predictions available, Has predictions: True",
-      "timestamp": "2025-10-04T21:09:23.686821",
+      "timestamp": "2025-10-04T21:09:36.491555",
       "response_data": null
     },
     {
       "test_name": "Betty History Endpoint",
       "success": true,
       "details": "Betty history: 83.3% accuracy, 6 total predictions, 2 weeks",
-      "timestamp": "2025-10-04T21:09:23.688695",
+      "timestamp": "2025-10-04T21:09:36.493526",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions Auth Protection",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:09:23.689756",
+      "timestamp": "2025-10-04T21:09:36.494577",
       "response_data": null
     },
     {
       "test_name": "Auth Me Without Token",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:09:23.690701",
+      "timestamp": "2025-10-04T21:09:36.495505",
       "response_data": null
     },
     {
       "test_name": "Create Test Session",
       "success": true,
-      "details": "Test user registered and logged in: testuser1759612163",
-      "timestamp": "2025-10-04T21:09:23.694340",
+      "details": "Test user registered and logged in: testuser1759612176",
+      "timestamp": "2025-10-04T21:09:36.499162",
       "response_data": null
     },
     {
       "test_name": "Auth Me Endpoint",
-      "success": false,
-      "details": "User data missing required fields",
-      "timestamp": "2025-10-04T21:09:23.695892",
-      "response_data": "{\"_id\":\"78ecd976-d15d-4608-9f9a-2b34613a5d50\",\"username\":\"testuser1759612163\",\"email\":\"test.user.1759612163@example.com\",\"is_premium\":false,\"created_at\":\"2025-10-04T21:09:23.691000\"}"
+      "success": true,
+      "details": "User authenticated: testuser1759612176 (test.user.1759612176@example.com)",
+      "timestamp": "2025-10-04T21:09:36.500798",
+      "response_data": null
     },
     {
       "test_name": "Betty Predictions with Auth",
       "success": true,
       "details": "Betty generated 3 predictions with full reasoning",
-      "timestamp": "2025-10-04T21:09:23.699366",
+      "timestamp": "2025-10-04T21:09:36.502630",
       "response_data": null
     }
   ]
