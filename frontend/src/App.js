@@ -511,7 +511,13 @@ function App() {
                 Meet Betty Crystal
               </CardTitle>
               <p className="text-slate-400 mt-2">Your friendly AI trading mentor making weekly predictions</p>
-              <div className="mt-4 p-4 bg-gradient-to-r from-emerald-900/10 to-teal-900/10 rounded-lg border border-emerald-500/20">
+              <div 
+                className="mt-4 p-4 bg-gradient-to-r from-emerald-900/10 to-teal-900/10 rounded-lg border border-emerald-500/20 cursor-pointer hover:border-emerald-400/40 transition-all"
+                onClick={() => {
+                  fetchBettyHistory();
+                  setShowBettyPredictions(false); // Close predictions if open
+                }}
+              >
                 <p className="text-emerald-300 text-center font-semibold mb-2">📊 See Betty's Historical Picks and Accuracy</p>
                 <p className="text-slate-400 text-sm text-center">View Betty's complete track record and future top three picks for the upcoming week</p>
                 <p className="text-xs text-center text-slate-500 mt-2">
