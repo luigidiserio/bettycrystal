@@ -547,6 +547,7 @@ function App() {
                       key={asset.symbol} 
                       asset={asset} 
                       type="currency"
+                      onClick={handleAssetSelect}
                     />
                   ))}
                 </div>
