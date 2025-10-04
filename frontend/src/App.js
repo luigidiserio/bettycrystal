@@ -210,6 +210,67 @@ function App() {
     }
   };
 
+  const fetchPremiumInsights = async () => {
+    if (!user?.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
+    
+    try {
+      setLoadingBetty(true);
+      const response = await axios.get(`${API}/betty/premium-insights`, {
+        withCredentials: true
+      });
+      setPremiumInsights(response.data);
+    } catch (error) {
+      console.error('Error fetching premium insights:', error);
+      if (error.response?.status === 403) {
+        setShowPremiumModal(true);
+      }
+    } finally {
+      setLoadingBetty(false);
+    }
+  };
+
+  const fetchPortfolioAnalysis = async () => {
+    if (!user?.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
+    
+    try {
+      setLoadingBetty(true);
+      const response = await axios.get(`${API}/betty/portfolio-analysis`, {
+        withCredentials: true
+      });
+      setPortfolioAnalysis(response.data);
+    } catch (error) {
+      console.error('Error fetching portfolio analysis:', error);
+      if (error.response?.status === 403) {
+        setShowPremiumModal(true);
+      }
+    } finally {
+      setLoadingBetty(false);
+    }
+  };
+
+  const upgradeToPremium = async () => {
+    try {
+      const response = await axios.post(`${API}/auth/upgrade-to-premium`, {}, {
+        withCredentials: true
+      });
+      
+      // Update user state
+      setUser(prev => ({ ...prev, isPremium: true }));
+      setShowPremiumModal(false);
+      
+      alert('Successfully upgraded to Premium! 🎉');
+    } catch (error) {
+      console.error('Error upgrading to premium:', error);
+      alert('Failed to upgrade to premium. Please try again.');
+    }
+  };
+
   const fetchBettyPredictions = async () => {
     if (!user) {
       handleShowLogin();
