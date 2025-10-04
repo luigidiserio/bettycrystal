@@ -257,7 +257,7 @@ async def generate_ai_prediction(symbol: str, name: str, current_price: float, h
             price_trend = "increasing" if prices[-1] > prices[0] else "decreasing" if prices[-1] < prices[0] else "stable"
             volatility = max(prices) - min(prices) if len(prices) > 1 else 0
         
-        prompt = f\"\"\"
+        prompt = f"""
 You are a financial analyst. Analyze {name} ({symbol}) and provide price predictions.
 
 Current Data:
@@ -287,7 +287,7 @@ Respond in this exact JSON format:
 }}
 
 Be conservative with predictions and confidence levels.
-\"\"\"
+"""
         
         # Initialize LLM chat
         chat = LlmChat(
