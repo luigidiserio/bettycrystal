@@ -748,6 +748,63 @@ async def logout(request: Request, response: Response):
     response.delete_cookie("session_token", path="/")
     return {"message": "Logged out successfully"}
 
+@api_router.post("/auth/upgrade-to-premium", dependencies=[Depends(require_auth)])
+async def upgrade_to_premium(user: User = Depends(require_auth)):
+    """Upgrade user to premium (simplified - no actual payment processing)"""
+    try:
+        # Update user to premium
+        await db.users.update_one(
+            {"_id": user.id},
+            {"$set": {"is_premium": True}}
+        )
+        
+        # Create subscription record
+        subscription = UserSubscription(
+            user_id=user.id,
+            plan=SubscriptionPlan.PREMIUM,
+            expires_at=datetime.now(timezone.utc) + timedelta(days=30)  # 30 days
+        )
+        
+        await db.user_subscriptions.insert_one(subscription.dict())
+        
+        return {
+            "message": "Successfully upgraded to Premium",
+            "plan": "premium",
+            "expires_at": subscription.expires_at.isoformat()
+        }
+        
+    except Exception as e:
+        logging.error(f"Error upgrading user to premium: {e}")
+        raise HTTPException(status_code=500, detail="Failed to upgrade to premium")
+
+@api_router.get("/auth/subscription-status", dependencies=[Depends(require_auth)])
+async def get_subscription_status(user: User = Depends(require_auth)):
+    """Get user's subscription status"""
+    try:
+        subscription = await db.user_subscriptions.find_one(
+            {"user_id": user.id, "is_active": True},
+            sort=[("created_at", -1)]
+        )
+        
+        if subscription:
+            return {
+                "plan": subscription["plan"],
+                "is_active": subscription["is_active"],
+                "expires_at": subscription.get("expires_at"),
+                "is_premium": user.is_premium
+            }
+        else:
+            return {
+                "plan": "free",
+                "is_active": True,
+                "expires_at": None,
+                "is_premium": user.is_premium
+            }
+            
+    except Exception as e:
+        logging.error(f"Error getting subscription status: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get subscription status")
+
 # Market Data Endpoints (same as before but with authentication for some)
 @api_router.get("/")
 async def root():
