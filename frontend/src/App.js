@@ -534,6 +534,7 @@ function App() {
                       key={asset.symbol} 
                       asset={asset} 
                       type="crypto"
+                      onClick={handleAssetSelect}
                     />
                   ))}
                 </div>
