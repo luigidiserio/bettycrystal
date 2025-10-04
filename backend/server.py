@@ -945,23 +945,33 @@ async def get_betty_history():
 async def get_betty_current_week():
     """Get Betty's predictions for current week (public - last week's accuracy)"""
     try:
-        # Get historical data to show accuracy
-        history = await get_betty_history()
-        
         current_monday = await get_monday_of_week()
         
+        # Initialize Betty's history if it doesn't exist
+        await initialize_betty_history()
+        
+        # Simple accuracy calculation without complex serialization
+        total_predictions = await db.betty_predictions.count_documents({
+            "was_correct": {"$ne": None}
+        })
+        
+        correct_predictions = await db.betty_predictions.count_documents({
+            "was_correct": True
+        })
+        
+        overall_accuracy = round((correct_predictions / total_predictions) * 100, 1) if total_predictions > 0 else 0
+        
         # Get current week's report (for checking if exists)
-        current_report = await db.betty_predictions.find(
-            {"week_start": current_monday}
-        ).to_list(None)
+        current_count = await db.betty_predictions.count_documents({
+            "week_start": current_monday
+        })
         
         return {
             "current_week_start": current_monday.isoformat(),
-            "has_current_predictions": len(current_report) > 0,
-            "overall_accuracy": history["overall_accuracy"],
-            "total_predictions": history["total_predictions"],
-            "weekly_history": history["weekly_results"][:2],  # Last 2 weeks for display
-            "betty_status": "Ready for new predictions!" if len(current_report) == 0 else "This week's predictions available"
+            "has_current_predictions": current_count > 0,
+            "overall_accuracy": overall_accuracy,
+            "total_predictions": total_predictions,
+            "betty_status": "Ready for new predictions!" if current_count == 0 else "This week's predictions available"
         }
         
     except Exception as e:
