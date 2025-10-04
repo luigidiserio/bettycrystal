@@ -1402,6 +1402,100 @@ function App() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Premium Upgrade Modal */}
+      <Dialog open={showPremiumModal} onOpenChange={setShowPremiumModal}>
+        <DialogContent className="max-w-2xl bg-gradient-to-br from-slate-900 to-purple-900/50 border border-purple-500/30">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <Crown className="w-8 h-8 text-amber-400" />
+              Upgrade to Betty Crystal Premium
+            </DialogTitle>
+            <p className="text-slate-400">
+              Unlock Betty's most powerful features and advanced market intelligence
+            </p>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Premium Features List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <h4 className="font-semibold text-purple-300">🚀 Advanced Features</h4>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                    Deep Market Analysis with AI
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                    Portfolio Risk Assessment
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                    Exclusive Trading Strategies
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                    Real-time Market Alerts
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="space-y-3">
+                <h4 className="font-semibold text-indigo-300">📊 Exclusive Access</h4>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                    Betty's Premium Predictions
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                    Advanced Chart Analysis
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                    Priority Customer Support
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                    Monthly Strategy Reports
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Pricing */}
+            <div className="text-center p-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-lg border border-purple-500/30">
+              <div className="text-3xl font-bold text-white mb-2">$9.99<span className="text-lg text-slate-400">/month</span></div>
+              <p className="text-slate-400 text-sm mb-4">Cancel anytime • 30-day money back guarantee</p>
+              
+              <div className="space-y-3">
+                <Button 
+                  onClick={upgradeToPremium}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3"
+                >
+                  <Crown className="w-4 h-4 mr-2" />
+                  Upgrade to Premium Now
+                </Button>
+                
+                <Button 
+                  onClick={() => setShowPremiumModal(false)}
+                  variant="outline"
+                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+                >
+                  Maybe Later
+                </Button>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <p className="text-xs text-slate-500">
+                🔒 Secure payment processing • ✨ Instant access after upgrade
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
