@@ -375,13 +375,13 @@ function App() {
       <BettyAccuracyBubble />
       
       {/* Header */}
-      <div className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700">
+      <div className="bg-gradient-to-r from-slate-900/90 via-emerald-950/20 to-slate-900/90 backdrop-blur-md border-b border-emerald-800/30">
         <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <BarChart3 className="w-8 h-8 text-cyan-400" />
+              <BarChart3 className="w-8 h-8 text-emerald-400" />
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-teal-400 to-amber-400 bg-clip-text text-transparent">
                   Financial Dashboard
                 </h1>
                 <p className="text-slate-400">Real-time market data & Betty's AI predictions</p>
