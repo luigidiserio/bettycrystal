@@ -1029,6 +1029,155 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Betty History Modal */}
+      <Dialog open={showBettyHistory} onOpenChange={setShowBettyHistory}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gradient-to-br from-slate-900 to-slate-800 border border-emerald-500/30">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
+              <div className="w-10 h-10">
+                <BettyCharacter size="small" />
+              </div>
+              Betty's Historical Performance & Future Predictions
+            </DialogTitle>
+            <p className="text-slate-400">
+              Complete track record with date-stamped predictions and accuracy analysis
+            </p>
+          </DialogHeader>
+          
+          <div className="space-y-6">
+            {/* Current Performance Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className="bg-gradient-to-br from-emerald-900/20 to-emerald-800/20 border border-emerald-500/30">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-emerald-400">{bettyAccuracy.overall}%</div>
+                  <div className="text-sm text-slate-400">Overall Accuracy</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-blue-900/20 to-blue-800/20 border border-blue-500/30">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-400">{bettyAccuracy.totalPredictions}</div>
+                  <div className="text-sm text-slate-400">Total Predictions</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-amber-900/20 to-amber-800/20 border border-amber-500/30">
+                <CardContent className="p-4 text-center">
+                  <div className="text-2xl font-bold text-amber-400">{bettyAccuracy.streak}</div>
+                  <div className="text-sm text-slate-400">Current Streak</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Historical Weeks */}
+            {bettyHistory && bettyHistory.weekly_results && (
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-cyan-400" />
+                  Weekly Performance History
+                </h3>
+                <div className="space-y-4">
+                  {bettyHistory.weekly_results.map((week, index) => (
+                    <Card key={week.week_start} className="bg-slate-800/50 border border-slate-700">
+                      <CardContent className="p-4">
+                        <div className="flex justify-between items-start mb-4">
+                          <div>
+                            <h4 className="font-semibold text-white">
+                              Week {bettyHistory.weekly_results.length - index} 
+                              ({new Date(week.week_start).toLocaleDateString('en-US', { 
+                                month: 'short', day: 'numeric', year: 'numeric' 
+                              })} - {new Date(new Date(week.week_start).getTime() + 6 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+                                month: 'short', day: 'numeric' 
+                              })})
+                            </h4>
+                            <p className="text-sm text-slate-400">
+                              Generated: {new Date(week.week_start).toLocaleDateString('en-US', { 
+                                weekday: 'long', month: 'long', day: 'numeric' 
+                              })}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <div className={`text-xl font-bold ${week.week_accuracy >= 70 ? 'text-emerald-400' : 'text-yellow-400'}`}>
+                              {week.correct_count}/{week.total_count}
+                            </div>
+                            <div className="text-sm text-slate-400">{week.week_accuracy}% accuracy</div>
+                          </div>
+                        </div>
+                        
+                        {/* Show predictions if available */}
+                        {week.predictions && week.predictions.length > 0 && (
+                          <div className="space-y-2">
+                            {week.predictions.map((prediction, predIndex) => (
+                              <div key={predIndex} className="p-3 bg-slate-700/30 rounded border border-slate-600">
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <p className="font-medium text-white">{prediction.asset}</p>
+                                    <p className="text-sm text-slate-300 mt-1">{prediction.prediction}</p>
+                                    <p className="text-xs text-slate-500 mt-1">
+                                      Confidence: {prediction.confidence}% • Target: {prediction.target_price ? `$${prediction.target_price}` : 'Price movement'}
+                                    </p>
+                                  </div>
+                                  {prediction.is_correct !== undefined && (
+                                    <Badge 
+                                      variant={prediction.is_correct ? "default" : "destructive"}
+                                      className={prediction.is_correct ? 
+                                        "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : 
+                                        "bg-red-500/20 text-red-400 border-red-500/30"
+                                      }
+                                    >
+                                      {prediction.is_correct ? '✓ Correct' : '✗ Missed'}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        
+                        <div className="mt-3 text-xs text-slate-500">
+                          Cumulative Accuracy: {week.cumulative_accuracy}%
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Future Predictions Preview */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-400" />
+                This Week's Upcoming Predictions
+              </h3>
+              <Card className="bg-gradient-to-br from-amber-900/10 to-orange-900/10 border border-amber-500/30">
+                <CardContent className="p-4">
+                  <div className="text-center">
+                    <p className="text-slate-300 mb-2">
+                      New predictions will be available Monday morning
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      Week of {new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+                        month: 'long', day: 'numeric', year: 'numeric' 
+                      })}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Close Button */}
+            <div className="flex justify-center pt-4">
+              <Button 
+                onClick={() => setShowBettyHistory(false)}
+                variant="outline"
+                className="border-slate-600 text-slate-300 hover:bg-slate-700"
+              >
+                Close History
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
