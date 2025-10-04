@@ -6,7 +6,8 @@ import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Bitcoin, Coins, Gem, BarChart3, Activity, Zap, Eye, Star, Lock, LogOut, User, Crown } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Bitcoin, Coins, Gem, BarChart3, Activity, Zap, Eye, Star, Lock, LogOut, User, Crown, Target, Award } from 'lucide-react';
+import BettyCharacter from './components/BettyCharacter';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -26,6 +27,14 @@ function App() {
   const [bettyPredictions, setBettyPredictions] = useState(null);
   const [showBettyPredictions, setShowBettyPredictions] = useState(false);
   const [loadingBetty, setLoadingBetty] = useState(false);
+
+  // Betty's mock accuracy for demo (in real app, this would come from backend)
+  const [bettyAccuracy] = useState({
+    overall: 73,
+    thisWeek: 'Week 1',
+    totalPredictions: 0,
+    streak: 0
+  });
 
   // Authentication functions
   const checkAuthStatus = async () => {
@@ -149,6 +158,37 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Betty's First Predictions (demo data)
+  const bettyDemoPredictions = [
+    {
+      id: 1,
+      asset: 'Bitcoin (BTC)',
+      prediction: 'Will go UP 3% or more by end of week',
+      confidence: 75,
+      reasoning: 'Strong institutional adoption signals and technical breakout patterns suggest upward momentum.',
+      isUp: true,
+      currentPrice: 121697
+    },
+    {
+      id: 2,
+      asset: 'Canadian Dollar (CAD)',
+      prediction: 'Will lose at least 1 cent by end of week',
+      confidence: 68,
+      reasoning: 'Bank of Canada dovish stance and weak oil prices creating downward pressure on CAD.',
+      isUp: false,
+      currentPrice: 0.717
+    },
+    {
+      id: 3,
+      asset: 'Gold (GLD)',
+      prediction: 'Will rise 2% or more by end of week',
+      confidence: 82,
+      reasoning: 'Global uncertainty and inflation concerns driving safe-haven demand for precious metals.',
+      isUp: true,
+      currentPrice: 3880
+    }
+  ];
+
   // Asset card component
   const AssetCard = ({ asset, type }) => {
     const isPositive = asset.change_percent >= 0;
@@ -191,86 +231,65 @@ function App() {
     );
   };
 
-  // Betty Crystal Icon Component
-  const BettyIcon = () => (
-    <div className="relative w-16 h-16 mx-auto mb-4">
-      {/* Crystal Ball */}
-      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-300 via-blue-300 to-cyan-300 opacity-80 animate-pulse"></div>
-      
-      {/* Inner glow */}
-      <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
-      
-      {/* Sparkles */}
-      <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping"></div>
-      <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-pink-300 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
-      <div className="absolute top-1 left-1 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
-    </div>
-  );
-
-  // Betty Prediction Card
-  const BettyPredictionCard = ({ prediction }) => {
-    const isUp = prediction.direction === 'up';
-    
+  // Betty Prediction Card for Demo
+  const BettyDemoPredictionCard = ({ prediction }) => {
     return (
-      <Card className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 border border-purple-500/30">
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-bold text-white">{prediction.asset_name}</h4>
-              <p className="text-purple-300 text-sm">{prediction.asset_symbol}</p>
-            </div>
-            {isUp ? 
-              <TrendingUp className="w-5 h-5 text-emerald-400" /> : 
-              <TrendingDown className="w-5 h-5 text-red-400" />
-            }
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400 text-sm">Current</span>
-              <span className="text-white font-semibold">${prediction.current_price.toLocaleString()}</span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400 text-sm">Target</span>
-              <span className={`font-bold ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
-                ${prediction.predicted_target_price.toLocaleString()}
-              </span>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400 text-sm">Expected</span>
-              <Badge className={isUp ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}>
-                {isUp ? '+' : '-'}{prediction.predicted_change_percent.toFixed(1)}%
-              </Badge>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-slate-400 text-sm">Confidence</span>
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star 
-                    key={i}
-                    className={`w-3 h-3 ${i < prediction.confidence_level * 5 ? 'text-yellow-400 fill-current' : 'text-slate-600'}`}
-                  />
-                ))}
-                <span className="text-xs text-slate-400 ml-2">
-                  {Math.round(prediction.confidence_level * 100)}%
-                </span>
-              </div>
-            </div>
-            
-            <div className="mt-3 p-3 bg-slate-800/50 rounded-lg">
-              <p className="text-xs text-slate-300 leading-relaxed">
-                {prediction.reasoning}
+      <Card className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 border border-purple-500/30 hover:border-purple-400/50 transition-all">
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex-1">
+              <h4 className="font-bold text-white text-sm">{prediction.asset}</h4>
+              <p className={`text-sm font-medium mt-1 ${prediction.isUp ? 'text-emerald-400' : 'text-red-400'}`}>
+                {prediction.prediction}
               </p>
             </div>
+            {prediction.isUp ? 
+              <TrendingUp className="w-4 h-4 text-emerald-400 mt-1" /> : 
+              <TrendingDown className="w-4 h-4 text-red-400 mt-1" />
+            }
           </div>
+          
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-slate-400">Confidence</span>
+            <div className="flex items-center space-x-1">
+              {[...Array(5)].map((_, i) => (
+                <Star 
+                  key={i}
+                  className={`w-2.5 h-2.5 ${i < prediction.confidence / 20 ? 'text-yellow-400 fill-current' : 'text-slate-600'}`}
+                />
+              ))}
+              <span className="text-xs text-slate-400 ml-1">{prediction.confidence}%</span>
+            </div>
+          </div>
+          
+          <p className="text-xs text-slate-300 leading-relaxed">
+            {prediction.reasoning}
+          </p>
         </CardContent>
       </Card>
     );
   };
+
+  // Betty Accuracy Bubble
+  const BettyAccuracyBubble = () => (
+    <div className="fixed top-20 right-6 z-50">
+      <Card className="bg-gradient-to-br from-purple-600/90 to-blue-600/90 border border-purple-400/50 backdrop-blur-md shadow-2xl">
+        <CardContent className="p-3 text-center">
+          <div className="flex items-center space-x-2 mb-1">
+            <BettyCharacter size="small" />
+            <div className="text-left">
+              <p className="text-white font-bold text-sm">Betty's Record</p>
+              <p className="text-purple-200 text-xs">{bettyAccuracy.thisWeek}</p>
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-white">{bettyAccuracy.overall}%</div>
+            <p className="text-purple-200 text-xs">Accuracy</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 
   if (authLoading) {
     return (
@@ -297,6 +316,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      {/* Betty's Accuracy Bubble */}
+      <BettyAccuracyBubble />
+      
       {/* Header */}
       <div className="bg-slate-900/80 backdrop-blur-md border-b border-slate-700">
         <div className="container mx-auto px-6 py-6">
@@ -307,7 +329,7 @@ function App() {
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
                   Financial Dashboard
                 </h1>
-                <p className="text-slate-400">Real-time market data & AI predictions</p>
+                <p className="text-slate-400">Real-time market data & Betty's AI predictions</p>
               </div>
             </div>
             
@@ -351,9 +373,8 @@ function App() {
         <Card className="mb-8 bg-gradient-to-r from-purple-900/20 via-blue-900/20 to-cyan-900/20 border border-purple-500/30">
           <CardHeader>
             <div className="text-center">
-              <BettyIcon />
-              <CardTitle className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-300 to-cyan-300 bg-clip-text flex items-center justify-center gap-2">
-                <Gem className="w-6 h-6 text-purple-400" />
+              <BettyCharacter size="large" />
+              <CardTitle className="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-300 to-cyan-300 bg-clip-text flex items-center justify-center gap-2 mt-4">
                 Meet Betty Crystal
               </CardTitle>
               <p className="text-slate-400 mt-2">Your friendly AI trading mentor making weekly predictions</p>
@@ -361,86 +382,73 @@ function App() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Last Week's Performance */}
+              {/* Free Predictions Preview */}
               <div>
                 <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                  <Star className="w-4 h-4 text-yellow-400" />
-                  Last Week's Performance
+                  <Target className="w-4 h-4 text-cyan-400" />
+                  This Week's Market Outlook (Free)
                 </h4>
                 
-                {bettyCurrentWeek?.last_week_report ? (
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
-                      <span className="text-slate-400">Accuracy Score</span>
-                      <span className="text-2xl font-bold text-emerald-400">
-                        {Math.round((bettyCurrentWeek.last_week_report.overall_accuracy || 0) * 100)}%
-                      </span>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      {bettyCurrentWeek.last_week_report.predictions?.slice(0, 3).map((pred, index) => (
-                        <div key={index} className="flex justify-between items-center p-2 bg-slate-800/30 rounded">
-                          <span className="text-sm text-slate-300">{pred.asset_name}</span>
-                          <Badge className="bg-slate-700 text-slate-300">
-                            {pred.direction === 'up' ? '↗️' : '↘️'} {pred.predicted_change_percent.toFixed(1)}%
-                          </Badge>
-                        </div>
-                      ))}
-                    </div>
+                <div className="space-y-3">
+                  <p className="text-sm text-slate-300 mb-3">Betty's general market analysis for this week:</p>
+                  
+                  <div className="p-3 bg-slate-800/50 rounded-lg">
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      📈 <strong>Crypto:</strong> Bitcoin showing bullish momentum with institutional interest growing. Expect volatility but upward bias.
+                    </p>
                   </div>
-                ) : (
-                  <div className="text-center py-6">
-                    <Gem className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-                    <p className="text-slate-400">Betty is preparing her first predictions...</p>
+                  
+                  <div className="p-3 bg-slate-800/50 rounded-lg">
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      💰 <strong>Currencies:</strong> CAD facing pressure from dovish Bank of Canada stance. USD strength continuing.
+                    </p>
                   </div>
-                )}
+                  
+                  <div className="p-3 bg-slate-800/50 rounded-lg">
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      🥇 <strong>Metals:</strong> Gold benefiting from uncertainty, safe-haven flows expected to continue.
+                    </p>
+                  </div>
+                </div>
               </div>
               
-              {/* This Week's Predictions */}
+              {/* Betty's Top 3 Picks (Gated) */}
               <div>
                 <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-cyan-400" />
-                  This Week's Predictions
+                  <Crown className="w-4 h-4 text-yellow-400" />
+                  Betty's Top 3 Picks (Premium)
                 </h4>
                 
-                {showBettyPredictions && bettyPredictions ? (
+                {user && showBettyPredictions && bettyPredictions ? (
                   <div className="space-y-3">
-                    <p className="text-sm text-slate-300 mb-3">Week of {new Date(bettyPredictions.week_start).toLocaleDateString()}</p>
-                    {bettyPredictions.predictions.map((prediction, index) => (
-                      <BettyPredictionCard key={index} prediction={prediction} />
+                    <p className="text-sm text-slate-300 mb-3">Week of {new Date().toLocaleDateString()}</p>
+                    {bettyDemoPredictions.map((prediction) => (
+                      <BettyDemoPredictionCard key={prediction.id} prediction={prediction} />
+                    ))}
+                  </div>
+                ) : user ? (
+                  <div>
+                    <p className="text-sm text-slate-300 mb-3">Betty's specific picks with exact targets:</p>
+                    {bettyDemoPredictions.map((prediction) => (
+                      <BettyDemoPredictionCard key={prediction.id} prediction={prediction} />
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    {user ? (
-                      <div>
-                        <Gem className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
-                        <p className="text-slate-300 mb-3">Ready to see Betty's predictions?</p>
-                        <Button 
-                          onClick={fetchBettyPredictions}
-                          disabled={loadingBetty}
-                          className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600"
-                        >
-                          {loadingBetty ? (
-                            <Activity className="w-4 h-4 mr-2 animate-spin" />
-                          ) : (
-                            <Eye className="w-4 h-4 mr-2" />
-                          )}
-                          {loadingBetty ? 'Generating...' : 'View This Week\'s Predictions'}
-                        </Button>
-                      </div>
-                    ) : (
-                      <div>
-                        <Lock className="w-8 h-8 text-slate-500 mx-auto mb-3" />
-                        <p className="text-slate-400 mb-3">Sign in to unlock Betty's weekly predictions</p>
-                        <Button 
-                          onClick={handleLogin}
-                          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                        >
-                          Sign In for Predictions
-                        </Button>
-                      </div>
-                    )}
+                    <Lock className="w-8 h-8 text-slate-500 mx-auto mb-3" />
+                    <p className="text-slate-400 mb-3">Sign in to see Betty's specific picks</p>
+                    <div className="space-y-2 mb-4">
+                      <p className="text-xs text-slate-500">• Exact price targets</p>
+                      <p className="text-xs text-slate-500">• Confidence levels</p>
+                      <p className="text-xs text-slate-500">• Detailed reasoning</p>
+                    </div>
+                    <Button 
+                      onClick={handleLogin}
+                      className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                    >
+                      <Award className="w-4 h-4 mr-2" />
+                      Unlock Betty's Picks
+                    </Button>
                   </div>
                 )}
               </div>
