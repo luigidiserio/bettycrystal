@@ -211,6 +211,7 @@ class BettyCrystalTester:
             test_session_data = {
                 "id": f"test-user-{int(datetime.now().timestamp())}",
                 "email": f"test.user.{int(datetime.now().timestamp())}@example.com",
+                "username": "testuser",
                 "name": "Test User",
                 "picture": "https://via.placeholder.com/150",
                 "session_token": f"test_session_{int(datetime.now().timestamp())}"
