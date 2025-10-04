@@ -249,6 +249,104 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-slate-900/80 border-t border-slate-700 mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- About Betty Crystal -->
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 relative">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-300 via-blue-300 to-cyan-300 opacity-80 relative">
+                                <div class="absolute inset-1 rounded-full bg-gradient-to-br from-white/40 to-transparent"></div>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="w-5 h-5 rounded-full relative" style="background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)">
+                                        <div class="absolute -top-0.5 left-0.5 right-0.5 h-2 bg-gradient-to-r from-yellow-200 via-yellow-300 to-amber-200 rounded-t-full"></div>
+                                        <div class="absolute top-1 left-1 w-0.5 h-0.5 rounded-full bg-blue-700"></div>
+                                        <div class="absolute top-1 right-1 w-0.5 h-0.5 rounded-full bg-blue-700"></div>
+                                        <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-1 border-b border-rose-400 rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-bold text-white">About Betty Crystal</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                        Betty Crystal is your friendly AI trading mentor who combines advanced market analysis 
+                        with mystical intuition to provide weekly predictions on cryptocurrencies, currencies, 
+                        and precious metals.
+                    </p>
+                    <p class="text-slate-500 text-xs">
+                        Betty learns from every prediction, constantly improving her accuracy 
+                        to help you make better trading decisions.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <button 
+                                onclick="scrollToTop()"
+                                class="text-slate-400 hover:text-cyan-400 text-sm transition-colors cursor-pointer"
+                            >
+                                ↑ Top of Page
+                            </button>
+                        </li>
+                        <li>
+                            <a href="#betty-section" class="text-slate-400 hover:text-cyan-400 text-sm transition-colors">
+                                Betty's Predictions
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#market-data" class="text-slate-400 hover:text-cyan-400 text-sm transition-colors">
+                                Market Data
+                            </a>
+                        </li>
+                        <li>
+                            <button 
+                                onclick="handleLogin()"
+                                class="text-cyan-400 hover:text-cyan-300 text-sm transition-colors cursor-pointer"
+                            >
+                                Sign In for Premium
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Copyright & Legal -->
+                <div>
+                    <h3 class="text-lg font-semibold text-white mb-4">Legal</h3>
+                    <div class="space-y-2">
+                        <p class="text-slate-500 text-xs leading-relaxed">
+                            © 2025 Betty Crystal Financial Dashboard. All rights reserved.
+                        </p>
+                        <p class="text-slate-500 text-xs leading-relaxed">
+                            Powered by AI • Real-time market data
+                        </p>
+                        <p class="text-slate-600 text-xs leading-relaxed mt-4">
+                            <strong>Disclaimer:</strong> Betty's predictions are for educational purposes only. 
+                            Not financial advice. Trade at your own risk.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom bar -->
+            <div class="border-t border-slate-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-slate-500 text-xs mb-4 md:mb-0">
+                    Made with 💜 by Betty Crystal • AI-Powered Trading Predictions
+                </p>
+                <div class="flex items-center space-x-4">
+                    <span class="text-slate-600 text-xs">Current Accuracy: 73%</span>
+                    <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                    <span class="text-slate-600 text-xs">Live Data</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // Configuration
         const BACKEND_URL = 'https://forex-crypto-metals.preview.emergentagent.com';
