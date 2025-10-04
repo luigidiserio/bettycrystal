@@ -353,7 +353,7 @@ function App() {
             <div className="text-center">
               <BettyIcon />
               <CardTitle className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-300 to-cyan-300 bg-clip-text flex items-center justify-center gap-2">
-                <Crystal className="w-6 h-6 text-purple-400" />
+                <Gem className="w-6 h-6 text-purple-400" />
                 Meet Betty Crystal
               </CardTitle>
               <p className="text-slate-400 mt-2">Your friendly AI trading mentor making weekly predictions</p>
