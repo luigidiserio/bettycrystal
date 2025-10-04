@@ -29,6 +29,7 @@ function App() {
   // Betty Crystal states
   const [bettyCurrentWeek, setBettyCurrentWeek] = useState(null);
   const [bettyPredictions, setBettyPredictions] = useState(null);
+  const [bettyHistory, setBettyHistory] = useState(null);
   const [showBettyPredictions, setShowBettyPredictions] = useState(false);
   const [loadingBetty, setLoadingBetty] = useState(false);
   
