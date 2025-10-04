@@ -329,8 +329,7 @@ function App() {
     
     return (
       <Card 
-        className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
-        onClick={() => onClick(asset, type)}
+        className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
         data-testid={`asset-card-${asset.symbol}`}
       >
         <CardContent className="p-4">
