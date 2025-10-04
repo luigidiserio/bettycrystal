@@ -56,7 +56,12 @@ function App() {
         withCredentials: true
       });
       
-      setUser(response.data.user);
+      const userData = response.data.user;
+      setUser({
+        ...userData,
+        name: userData.username === 'demo' ? 'Demo User' : 'Betty Lover',
+        isPremium: userData.is_premium
+      });
       setShowLoginForm(false);
       setLoginForm({ username: '', password: '' });
       
