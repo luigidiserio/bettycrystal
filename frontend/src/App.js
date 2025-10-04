@@ -81,7 +81,9 @@ function App() {
       );
       
       // Create session in our backend
-      await axios.post(`${API}/auth/session`, response.data);
+      await axios.post(`${API}/auth/session`, response.data, {
+        withCredentials: true
+      });
       
       // Clean URL and check auth status
       window.history.replaceState({}, document.title, window.location.pathname);
