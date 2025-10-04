@@ -516,6 +516,7 @@ function App() {
                 className="mt-4 p-4 bg-gradient-to-r from-emerald-900/10 to-teal-900/10 rounded-lg border border-emerald-500/20 cursor-pointer hover:border-emerald-400/40 transition-all"
                 onClick={() => {
                   fetchBettyHistory();
+                  setShowBettyHistory(true);
                   setShowBettyPredictions(false); // Close predictions if open
                 }}
               >
