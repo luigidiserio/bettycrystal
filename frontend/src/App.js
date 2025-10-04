@@ -425,11 +425,11 @@ function App() {
 
       <div className="container mx-auto px-6 py-8">
         {/* Betty Crystal Section */}
-        <Card className="mb-8 bg-gradient-to-r from-purple-900/20 via-blue-900/20 to-cyan-900/20 border border-purple-500/30">
+        <Card className="mb-8 bg-gradient-to-r from-emerald-900/15 via-amber-900/10 to-slate-900/20 border border-emerald-500/20 shadow-lg shadow-emerald-500/5">
           <CardHeader>
             <div className="text-center">
               <BettyCharacter size="large" />
-              <CardTitle className="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-300 to-cyan-300 bg-clip-text flex items-center justify-center gap-2 mt-4">
+              <CardTitle className="text-3xl font-bold text-transparent bg-gradient-to-r from-emerald-300 via-teal-300 to-amber-300 bg-clip-text flex items-center justify-center gap-2 mt-4">
                 Meet Betty Crystal
               </CardTitle>
               <p className="text-slate-400 mt-2">Your friendly AI trading mentor making weekly predictions</p>
