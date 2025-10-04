@@ -474,19 +474,32 @@ function App() {
                   Betty's Top 3 Picks (Premium)
                 </h4>
                 
-                {user && showBettyPredictions && bettyPredictions ? (
-                  <div className="space-y-3">
-                    <p className="text-sm text-slate-300 mb-3">Week of {new Date().toLocaleDateString()}</p>
-                    {bettyDemoPredictions.map((prediction) => (
-                      <BettyDemoPredictionCard key={prediction.id} prediction={prediction} />
-                    ))}
-                  </div>
-                ) : user ? (
+                {user ? (
                   <div>
+                    <div className="mb-4 p-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg">
+                      <p className="text-emerald-400 text-sm flex items-center gap-2">
+                        <Crown className="w-4 h-4" />
+                        Premium Access Unlocked! Welcome {user.name}
+                      </p>
+                    </div>
                     <p className="text-sm text-slate-300 mb-3">Betty's specific picks with exact targets:</p>
                     {bettyDemoPredictions.map((prediction) => (
                       <BettyDemoPredictionCard key={prediction.id} prediction={prediction} />
                     ))}
+                    <div className="mt-4 text-center">
+                      <Button 
+                        onClick={fetchBettyPredictions}
+                        disabled={loadingBetty}
+                        className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600"
+                      >
+                        {loadingBetty ? (
+                          <Activity className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Zap className="w-4 h-4 mr-2" />
+                        )}
+                        {loadingBetty ? 'Getting Live Predictions...' : 'Get This Week\'s Live Predictions'}
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-center py-6">
