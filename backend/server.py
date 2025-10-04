@@ -62,6 +62,20 @@ class UserSession(BaseModel):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class SubscriptionPlan(str, Enum):
+    FREE = "free"
+    PREMIUM = "premium"
+    VIP = "vip"
+
+class UserSubscription(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    plan: SubscriptionPlan = SubscriptionPlan.FREE
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    expires_at: Optional[datetime] = None
+    stripe_subscription_id: Optional[str] = None
+
 class AssetPrice(BaseModel):
     symbol: str
     name: str
