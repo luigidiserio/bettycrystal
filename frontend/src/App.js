@@ -52,10 +52,7 @@ function App() {
     e.preventDefault();
     
     try {
-      const response = await axios.post(`${API}/auth/login`, {
-        username: loginForm.username,
-        password: loginForm.password
-      }, {
+      const response = await axios.post(`${API}/auth/login?username=${encodeURIComponent(loginForm.username)}&password=${encodeURIComponent(loginForm.password)}`, {}, {
         withCredentials: true
       });
       
