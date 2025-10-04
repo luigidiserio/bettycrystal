@@ -328,18 +328,18 @@ function App() {
   // Betty Accuracy Bubble
   const BettyAccuracyBubble = () => (
     <div className="fixed top-20 right-6 z-50">
-      <Card className="bg-gradient-to-br from-purple-600/90 to-blue-600/90 border border-purple-400/50 backdrop-blur-md shadow-2xl">
+      <Card className="bg-gradient-to-br from-emerald-600/90 to-teal-600/90 border border-emerald-400/50 backdrop-blur-md shadow-2xl shadow-emerald-500/20">
         <CardContent className="p-3 text-center">
           <div className="flex items-center space-x-2 mb-1">
             <BettyCharacter size="small" />
             <div className="text-left">
               <p className="text-white font-bold text-sm">Betty's Record</p>
-              <p className="text-purple-200 text-xs">{bettyAccuracy.thisWeek}</p>
+              <p className="text-emerald-200 text-xs">{bettyAccuracy.thisWeek}</p>
             </div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-white">{bettyAccuracy.overall}%</div>
-            <p className="text-purple-200 text-xs">Accuracy</p>
+            <p className="text-emerald-200 text-xs">Accuracy</p>
           </div>
         </CardContent>
       </Card>
