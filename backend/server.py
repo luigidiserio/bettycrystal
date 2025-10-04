@@ -861,11 +861,11 @@ async def initialize_betty_history():
         # Convert datetime objects to strings for MongoDB
         for pred in all_predictions:
             if isinstance(pred.get('week_start'), datetime):
-                pred['week_start'] = pred['week_start']
+                pred['week_start'] = pred['week_start'].isoformat()
             if isinstance(pred.get('created_at'), datetime):
-                pred['created_at'] = pred['created_at']
+                pred['created_at'] = pred['created_at'].isoformat()
             if isinstance(pred.get('evaluated_at'), datetime):
-                pred['evaluated_at'] = pred['evaluated_at']
+                pred['evaluated_at'] = pred['evaluated_at'].isoformat()
         
         await db.betty_predictions.insert_many(all_predictions)
         
