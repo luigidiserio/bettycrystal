@@ -366,6 +366,14 @@
             window.location.href = `${AUTH_URL}/?redirect=${redirectUrl}`;
         }
         
+        // Scroll to top function
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
         // Tab switching
         function switchTab(tabName) {
             currentTab = tabName;
