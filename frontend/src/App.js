@@ -345,7 +345,7 @@ function App() {
             }
           </div>
           
-          <div className="space-y-1">
+          <div className="space-y-3">
             <p className="text-2xl font-bold text-white">
               ${asset.price.toLocaleString()}
             </p>
@@ -360,6 +360,19 @@ function App() {
                 {isPositive ? '+' : ''}${asset.change_24h.toFixed(2)}
               </span>
             </div>
+            
+            {/* Analyze Button */}
+            <Button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onClick(asset, type);
+              }}
+              size="sm"
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-medium"
+            >
+              <BarChart3 className="w-3 h-3 mr-1" />
+              Analyze
+            </Button>
           </div>
         </CardContent>
       </Card>
