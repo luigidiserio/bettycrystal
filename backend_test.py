@@ -360,11 +360,11 @@ class BettyCrystalTester:
         return len(critical_failures) == 0
 
 def main():
-    tester = FinancialDashboardTester()
+    tester = BettyCrystalTester()
     success = tester.run_comprehensive_test()
     
     # Save detailed results
-    with open("/app/backend_test_results.json", "w") as f:
+    with open("/app/betty_crystal_test_results.json", "w") as f:
         json.dump({
             "timestamp": datetime.now().isoformat(),
             "total_tests": tester.tests_run,
