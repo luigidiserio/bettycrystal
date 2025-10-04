@@ -31,6 +31,7 @@ function App() {
   const [bettyPredictions, setBettyPredictions] = useState(null);
   const [bettyHistory, setBettyHistory] = useState(null);
   const [showBettyPredictions, setShowBettyPredictions] = useState(false);
+  const [showBettyHistory, setShowBettyHistory] = useState(false);
   const [loadingBetty, setLoadingBetty] = useState(false);
   
   // Asset analysis states (restore original functionality)
