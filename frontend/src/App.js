@@ -830,7 +830,7 @@ function App() {
                               "bg-red-500/20 text-red-400 border-red-500/30"
                             }
                           >
-                            {assetPrediction.direction === 'up' ? '↗' : '↘'} {assetPrediction.direction.toUpperCase()}
+                            {assetPrediction.direction === 'up' ? '↗' : '↘'} {assetPrediction.direction?.toUpperCase() || 'N/A'}
                           </Badge>
                         </div>
                         <p className="text-2xl font-bold text-white">
