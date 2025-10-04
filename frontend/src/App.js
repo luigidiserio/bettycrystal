@@ -229,12 +229,13 @@ function App() {
   ];
 
   // Asset card component
-  const AssetCard = ({ asset, type }) => {
+  const AssetCard = ({ asset, type, onClick }) => {
     const isPositive = asset.change_percent >= 0;
     
     return (
       <Card 
-        className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
+        className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
+        onClick={() => onClick(asset, type)}
         data-testid={`asset-card-${asset.symbol}`}
       >
         <CardContent className="p-4">
