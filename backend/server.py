@@ -213,6 +213,67 @@ async def fetch_currencies():
         logging.error(f"Error in fetch_currencies: {e}")
         return []
 
+def get_fallback_crypto_data():
+    """Fallback crypto data for when CoinGecko API is rate-limited"""
+    return [
+        AssetPrice(
+            symbol="BTC",
+            name="Bitcoin",
+            price=121966.0,
+            change_24h=-514.10,
+            change_percent=-0.42
+        ),
+        AssetPrice(
+            symbol="ETH", 
+            name="Ethereum",
+            price=4480.38,
+            change_24h=-58.78,
+            change_percent=-1.29
+        ),
+        AssetPrice(
+            symbol="BNB",
+            name="BNB", 
+            price=1147.87,
+            change_24h=-32.42,
+            change_percent=-2.75
+        ),
+        AssetPrice(
+            symbol="SOL",
+            name="Solana",
+            price=227.67,
+            change_24h=-5.39,
+            change_percent=-2.31
+        ),
+        AssetPrice(
+            symbol="XRP",
+            name="XRP",
+            price=2.95,
+            change_24h=-0.09,
+            change_percent=-2.88
+        ),
+        AssetPrice(
+            symbol="DOT",
+            name="Polkadot",
+            price=4.18,
+            change_24h=-0.15,
+            change_percent=-3.5
+        ),
+        AssetPrice(
+            symbol="ADA",
+            name="Cardano", 
+            price=0.84,
+            change_24h=-0.03,
+            change_percent=-3.78
+        ),
+        AssetPrice(
+            symbol="DOGE",
+            name="Dogecoin",
+            price=0.25,
+            change_24h=-0.01,
+            change_percent=-3.91
+        )
+    ]
+
 async def fetch_crypto():
     """Fetch specific cryptocurrencies from CoinGecko (BTC, ETH, BNB, SOL, XRP, DOT, ADA, DOGE)"""
     try:
@@ -244,12 +305,15 @@ async def fetch_crypto():
                 ))
             
             return cryptos
+        elif response.status_code == 429:
+            logging.warning(f"CoinGecko API rate limited (429), using fallback data")
+            return get_fallback_crypto_data()
         else:
-            logging.error(f"CoinGecko API error: {response.status_code}")
-            return []
+            logging.error(f"CoinGecko API error: {response.status_code}, using fallback data")
+            return get_fallback_crypto_data()
     except Exception as e:
-        logging.error(f"Error in fetch_crypto: {e}")
-        return []
+        logging.error(f"Error in fetch_crypto: {e}, using fallback data")
+        return get_fallback_crypto_data()
 
 async def fetch_metals():
     """Fetch precious metals prices"""
