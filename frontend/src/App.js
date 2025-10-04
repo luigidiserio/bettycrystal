@@ -568,6 +568,138 @@ function App() {
             </Tabs>
           </div>
         </div>
+
+        {/* Asset Analysis Panel */}
+        {selectedAsset && (
+          <Card className="mt-8 bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-2xl font-bold text-white flex items-center gap-3">
+                  <BarChart3 className="w-6 h-6 text-cyan-400" />
+                  {selectedAsset.name} Analysis
+                </CardTitle>
+                <Button 
+                  onClick={() => setSelectedAsset(null)}
+                  variant="outline"
+                  size="sm"
+                  className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                >
+                  Close
+                </Button>
+              </div>
+              <p className="text-slate-400">
+                Detailed analysis and predictions for {selectedAsset.symbol}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Price Chart */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-cyan-400" />
+                    Price History (24h)
+                  </h3>
+                  {historicalData.length > 0 ? (
+                    <div className="h-64 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={historicalData}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                          <XAxis 
+                            dataKey="time" 
+                            stroke="#9CA3AF"
+                            fontSize={12}
+                          />
+                          <YAxis 
+                            stroke="#9CA3AF"
+                            fontSize={12}
+                            domain={['dataMin - 10', 'dataMax + 10']}
+                          />
+                          <Tooltip 
+                            contentStyle={{
+                              backgroundColor: '#1F2937',
+                              border: '1px solid #374151',
+                              borderRadius: '8px',
+                              color: '#F9FAFB'
+                            }}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="price" 
+                            stroke="#06B6D4" 
+                            strokeWidth={2}
+                            dot={false}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <div className="h-64 flex items-center justify-center bg-slate-800/30 rounded-lg">
+                      <Activity className="w-8 h-8 text-slate-500 animate-pulse" />
+                    </div>
+                  )}
+                </div>
+
+                {/* AI Prediction */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-yellow-400" />
+                    AI Prediction
+                  </h3>
+                  {assetPrediction ? (
+                    <div className="space-y-4">
+                      <div className="p-4 bg-slate-800/50 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm text-slate-400">Next 24h Prediction</span>
+                          <Badge 
+                            variant={assetPrediction.direction === 'up' ? "default" : "destructive"}
+                            className={assetPrediction.direction === 'up' ? 
+                              "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : 
+                              "bg-red-500/20 text-red-400 border-red-500/30"
+                            }
+                          >
+                            {assetPrediction.direction === 'up' ? '↗' : '↘'} {assetPrediction.direction.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <p className="text-2xl font-bold text-white">
+                          ${assetPrediction.predicted_price?.toLocaleString() || 'N/A'}
+                        </p>
+                        <p className={`text-sm ${assetPrediction.direction === 'up' ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {assetPrediction.change_percent > 0 ? '+' : ''}{assetPrediction.change_percent?.toFixed(2) || '0.00'}% expected change
+                        </p>
+                      </div>
+                      
+                      <div className="p-4 bg-slate-800/50 rounded-lg">
+                        <h4 className="font-medium text-white mb-2">Confidence Level</h4>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex-1 bg-slate-700 rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-cyan-500 to-blue-500 h-2 rounded-full transition-all duration-500"
+                              style={{ width: `${assetPrediction.confidence || 0}%` }}
+                            />
+                          </div>
+                          <span className="text-sm text-slate-300">{assetPrediction.confidence || 0}%</span>
+                        </div>
+                      </div>
+
+                      {assetPrediction.reasoning && (
+                        <div className="p-4 bg-slate-800/50 rounded-lg">
+                          <h4 className="font-medium text-white mb-2">Analysis</h4>
+                          <p className="text-sm text-slate-300 leading-relaxed">
+                            {assetPrediction.reasoning}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="h-64 flex items-center justify-center bg-slate-800/30 rounded-lg">
+                      <Zap className="w-8 h-8 text-slate-500 animate-pulse" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Footer */}
