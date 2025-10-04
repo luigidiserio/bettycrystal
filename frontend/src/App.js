@@ -485,9 +485,9 @@ function App() {
                     <Lock className="w-8 h-8 text-slate-500 mx-auto mb-3" />
                     <p className="text-slate-400 mb-3">Sign in to see Betty's specific picks</p>
                     <div className="space-y-2 mb-4">
-                      <p className="text-xs text-slate-500">• Exact price targets</p>
-                      <p className="text-xs text-slate-500">• Confidence levels</p>
-                      <p className="text-xs text-slate-500">• Detailed reasoning</p>
+                      <p className="text-xs text-slate-500">• "Bitcoin will go UP 3% or more by end of week"</p>
+                      <p className="text-xs text-slate-500">• "CAD will lose at least 1 cent by end of week"</p>
+                      <p className="text-xs text-slate-500">• "Gold will rise 2% or more by end of week"</p>
                     </div>
                     <Button 
                       onClick={handleShowLogin}
