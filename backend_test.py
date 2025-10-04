@@ -230,13 +230,13 @@ class BettyCrystalTester:
                 return False, None
             
             # Now login to get session
-            login_data = {
+            login_params = {
                 "username": username,
                 "password": password
             }
             
             login_response = requests.post(f"{self.api_url}/auth/login", 
-                                         data=login_data, timeout=10)
+                                         params=login_params, timeout=10)
             
             success = login_response.status_code == 200
             
