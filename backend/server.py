@@ -1122,6 +1122,15 @@ async def get_betty_current_week():
         logging.error(f"Error getting Betty's current week: {e}")
         raise HTTPException(status_code=500, detail="Failed to get Betty's status")
 
+async def require_premium_auth(user: User = Depends(require_auth)):
+    """Require premium authentication"""
+    if not user.is_premium:
+        raise HTTPException(
+            status_code=403, 
+            detail="Premium subscription required for this feature"
+        )
+    return user
+
 @api_router.get("/betty/predictions", dependencies=[Depends(require_auth)])
 async def get_betty_predictions(user: User = Depends(require_auth)):
     """Get Betty's predictions for this week (requires authentication)"""
