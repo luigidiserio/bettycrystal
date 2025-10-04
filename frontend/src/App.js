@@ -166,8 +166,21 @@ function App() {
 
   // Initialize app
   useEffect(() => {
-    // Simple initialization - no OAuth session handling needed
-    setAuthLoading(false);
+    const checkSession = async () => {
+      try {
+        const response = await axios.get(`${API}/auth/me`, {
+          withCredentials: true
+        });
+        setUser(response.data.user);
+      } catch (error) {
+        // No active session, user remains null
+        console.log('No active session');
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+    
+    checkSession();
   }, []);
 
   // Fetch market data
