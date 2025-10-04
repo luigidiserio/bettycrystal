@@ -47,9 +47,9 @@ class AssetType(str, Enum):
 # Data Models
 class User(BaseModel):
     id: str = Field(alias="_id")
+    username: str
     email: str
-    name: str
-    picture: Optional[str] = None
+    is_premium: bool = False
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     class Config:
