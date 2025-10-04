@@ -390,7 +390,7 @@ function App() {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    <Crystal className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                    <Gem className="w-8 h-8 text-purple-400 mx-auto mb-2" />
                     <p className="text-slate-400">Betty is preparing her first predictions...</p>
                   </div>
                 )}
