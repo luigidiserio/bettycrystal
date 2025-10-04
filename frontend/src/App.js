@@ -51,20 +51,24 @@ function App() {
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    // Simple demo login - in production this would call your auth API
-    if (loginForm.username && loginForm.password) {
-      // Demo credentials
-      if ((loginForm.username === 'demo' && loginForm.password === 'demo') || 
-          (loginForm.username === 'betty' && loginForm.password === 'crystal')) {
-        setUser({
-          name: loginForm.username === 'demo' ? 'Demo User' : 'Betty Lover',
-          email: `${loginForm.username}@example.com`,
-          isPremium: true
-        });
-        setShowLoginForm(false);
-        setLoginForm({ username: '', password: '' });
-      } else {
+    try {
+      const response = await axios.post(`${API}/auth/login`, {
+        username: loginForm.username,
+        password: loginForm.password
+      }, {
+        withCredentials: true
+      });
+      
+      setUser(response.data.user);
+      setShowLoginForm(false);
+      setLoginForm({ username: '', password: '' });
+      
+    } catch (error) {
+      if (error.response?.status === 401) {
         alert('Invalid credentials. Try: demo/demo or betty/crystal');
+      } else {
+        console.error('Login error:', error);
+        alert('Login failed. Please try again.');
       }
     }
   };
