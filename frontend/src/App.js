@@ -1173,6 +1173,127 @@ function App() {
         </div>
       )}
 
+      {/* Sign Up Form Modal */}
+      {showSignUpForm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4 bg-gradient-to-br from-slate-900/95 to-purple-900/20 border border-purple-500/30">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-white text-center">
+                Join Betty Crystal
+              </CardTitle>
+              <p className="text-slate-400 text-center">Create your account to access premium features</p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={signUpForm.username}
+                    onChange={handleSignUpFormChange}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                    placeholder="Choose a username"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={signUpForm.email}
+                    onChange={handleSignUpFormChange}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                    placeholder="your.email@example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={signUpForm.password}
+                    onChange={handleSignUpFormChange}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                    placeholder="Create a secure password"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={signUpForm.confirmPassword}
+                    onChange={handleSignUpFormChange}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500"
+                    placeholder="Confirm your password"
+                    required
+                  />
+                </div>
+                
+                <div className="bg-purple-900/20 p-3 rounded-lg border border-purple-500/30">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Crown className="w-4 h-4 text-amber-400" />
+                    <p className="text-sm text-purple-300 font-semibold">Free Account Includes:</p>
+                  </div>
+                  <ul className="text-xs text-slate-300 space-y-1">
+                    <li>• Market data & basic predictions</li>
+                    <li>• Betty's historical performance</li>
+                    <li>• Asset analysis charts</li>
+                  </ul>
+                  <p className="text-xs text-amber-300 mt-2">
+                    ✨ Upgrade to Premium anytime for advanced features
+                  </p>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <Button
+                    type="submit"
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  >
+                    Create Account
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setShowSignUpForm(false)}
+                    variant="outline"
+                    className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                
+                <div className="text-center pt-4 border-t border-slate-700">
+                  <p className="text-sm text-slate-400 mb-2">Already have an account?</p>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      setShowSignUpForm(false);
+                      setShowLoginForm(true);
+                    }}
+                    variant="outline"
+                    className="w-full border-emerald-500/50 text-emerald-300 hover:bg-emerald-900/30 hover:border-emerald-400"
+                  >
+                    Sign In Instead
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Footer */}
       <footer className="bg-gradient-to-r from-slate-900/90 via-emerald-950/10 to-slate-900/90 border-t border-emerald-800/20 mt-16">
         <div className="container mx-auto px-6 py-8">
