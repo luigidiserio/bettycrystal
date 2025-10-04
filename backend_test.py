@@ -207,28 +207,66 @@ class BettyCrystalTester:
     def create_test_session(self):
         """Create a test user session for authenticated endpoints"""
         try:
-            # Create test session data
-            test_session_data = {
-                "id": f"test-user-{int(datetime.now().timestamp())}",
-                "email": f"test.user.{int(datetime.now().timestamp())}@example.com",
-                "username": "testuser",
-                "name": "Test User",
-                "picture": "https://via.placeholder.com/150",
-                "session_token": f"test_session_{int(datetime.now().timestamp())}"
+            # First register a test user
+            timestamp = int(datetime.now().timestamp())
+            username = f"testuser{timestamp}"
+            email = f"test.user.{timestamp}@example.com"
+            password = "testpassword123"
+            
+            # Register user
+            register_data = {
+                "username": username,
+                "email": email,
+                "password": password
             }
             
-            response = requests.post(f"{self.api_url}/auth/session", json=test_session_data, timeout=10)
-            success = response.status_code == 200
+            register_response = requests.post(f"{self.api_url}/auth/register", 
+                                            data=register_data, timeout=10)
+            
+            if register_response.status_code != 200:
+                self.log_test("Create Test Session", False, 
+                            f"Failed to register user: {register_response.status_code}", 
+                            register_response.text)
+                return False, None
+            
+            # Now login to get session
+            login_data = {
+                "username": username,
+                "password": password
+            }
+            
+            login_response = requests.post(f"{self.api_url}/auth/login", 
+                                         data=login_data, timeout=10)
+            
+            success = login_response.status_code == 200
             
             if success:
-                details = f"Test session created for user: {test_session_data['name']}"
-                self.test_session_token = test_session_data["session_token"]
+                # Extract session token from cookies
+                session_token = None
+                if 'Set-Cookie' in login_response.headers:
+                    cookies = login_response.headers['Set-Cookie']
+                    if 'session_token=' in cookies:
+                        # Extract session token from cookie
+                        start = cookies.find('session_token=') + len('session_token=')
+                        end = cookies.find(';', start)
+                        if end == -1:
+                            end = len(cookies)
+                        session_token = cookies[start:end]
+                
+                if session_token:
+                    details = f"Test user registered and logged in: {username}"
+                    self.test_session_token = session_token
+                else:
+                    success = False
+                    details = "Login successful but no session token found"
+                    self.test_session_token = None
             else:
-                details = f"Failed to create session: {response.status_code}"
+                details = f"Failed to login: {login_response.status_code}"
                 self.test_session_token = None
                 
-            self.log_test("Create Test Session", success, details, response.text if not success else None)
-            return success, test_session_data["session_token"] if success else None
+            self.log_test("Create Test Session", success, details, 
+                         login_response.text if not success else None)
+            return success, session_token if success else None
             
         except Exception as e:
             self.log_test("Create Test Session", False, f"Error: {str(e)}")
