@@ -160,83 +160,147 @@ class BettyCrystalTester:
             self.log_test("Metals Endpoint", False, f"Error: {str(e)}")
             return False, []
 
-    def test_historical_data(self, symbol="BTC", asset_type="crypto"):
-        """Test historical data endpoint"""
+    def test_betty_current_week(self):
+        """Test Betty's current week status endpoint (public)"""
         try:
-            response = requests.get(f"{self.api_url}/historical/{symbol}?asset_type={asset_type}", timeout=20)
+            response = requests.get(f"{self.api_url}/betty/current-week", timeout=15)
             success = response.status_code == 200
             
             if success:
                 data = response.json()
-                if "symbol" in data and "data" in data:
-                    historical_data = data["data"]
-                    if isinstance(historical_data, list) and len(historical_data) > 0:
-                        # Check data structure
-                        first_item = historical_data[0]
-                        has_required_fields = "timestamp" in first_item and "price" in first_item
-                        
-                        if has_required_fields:
-                            details = f"Found {len(historical_data)} historical data points for {symbol}"
-                        else:
-                            success = False
-                            details = "Historical data missing required fields (timestamp, price)"
-                    else:
-                        success = False
-                        details = "No historical data returned"
+                required_fields = ["current_week_start", "has_current_predictions", "betty_status"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    details = f"Betty status: {data['betty_status']}, Has predictions: {data['has_current_predictions']}"
                 else:
                     success = False
-                    details = "Invalid response format"
+                    details = "Missing required fields in Betty status response"
             else:
                 details = f"Status code: {response.status_code}"
                 
-            self.log_test(f"Historical Data ({symbol})", success, details, response.text if not success else None)
+            self.log_test("Betty Current Week Status", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Betty Current Week Status", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_betty_predictions_without_auth(self):
+        """Test Betty's predictions endpoint without authentication (should fail)"""
+        try:
+            response = requests.get(f"{self.api_url}/betty/predictions", timeout=15)
+            success = response.status_code == 401  # Should be unauthorized
+            
+            if success:
+                details = "Correctly requires authentication (401 Unauthorized)"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 401)"
+                
+            self.log_test("Betty Predictions Auth Protection", success, details, response.text if not success else None)
             return success
             
         except Exception as e:
-            self.log_test(f"Historical Data ({symbol})", False, f"Error: {str(e)}")
+            self.log_test("Betty Predictions Auth Protection", False, f"Error: {str(e)}")
             return False
 
-    def test_ai_prediction(self, symbol="BTC", asset_type="crypto"):
-        """Test AI prediction endpoint"""
+    def create_test_session(self):
+        """Create a test user session for authenticated endpoints"""
         try:
-            print(f"Testing AI prediction for {symbol} (this may take 10-15 seconds)...")
-            response = requests.get(f"{self.api_url}/predict/{symbol}?asset_type={asset_type}", timeout=30)
+            # Create test session data
+            test_session_data = {
+                "id": f"test-user-{int(datetime.now().timestamp())}",
+                "email": f"test.user.{int(datetime.now().timestamp())}@example.com",
+                "name": "Test User",
+                "picture": "https://via.placeholder.com/150",
+                "session_token": f"test_session_{int(datetime.now().timestamp())}"
+            }
+            
+            response = requests.post(f"{self.api_url}/auth/session", json=test_session_data, timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                details = f"Test session created for user: {test_session_data['name']}"
+                self.test_session_token = test_session_data["session_token"]
+            else:
+                details = f"Failed to create session: {response.status_code}"
+                self.test_session_token = None
+                
+            self.log_test("Create Test Session", success, details, response.text if not success else None)
+            return success, test_session_data["session_token"] if success else None
+            
+        except Exception as e:
+            self.log_test("Create Test Session", False, f"Error: {str(e)}")
+            return False, None
+
+    def test_betty_predictions_with_auth(self, session_token):
+        """Test Betty's predictions endpoint with authentication"""
+        try:
+            headers = {"Authorization": f"Bearer {session_token}"}
+            print("Testing Betty's AI prediction generation (this may take 15-30 seconds)...")
+            response = requests.get(f"{self.api_url}/betty/predictions", headers=headers, timeout=45)
             success = response.status_code == 200
             
             if success:
                 data = response.json()
-                required_fields = ["asset", "current_price", "predictions", "analysis"]
+                required_fields = ["week_start", "predictions", "betty_confidence"]
                 has_required_fields = all(field in data for field in required_fields)
                 
                 if has_required_fields:
                     predictions = data["predictions"]
-                    required_timeframes = ["1_week", "1_month", "1_year"]
-                    has_timeframes = all(tf in predictions for tf in required_timeframes)
-                    
-                    if has_timeframes:
+                    if isinstance(predictions, list) and len(predictions) == 3:
                         # Check prediction structure
-                        week_pred = predictions["1_week"]
-                        has_pred_fields = "price" in week_pred and "confidence" in week_pred
+                        first_pred = predictions[0]
+                        pred_fields = ["asset_symbol", "asset_name", "direction", "predicted_change_percent", 
+                                     "confidence_level", "reasoning", "predicted_target_price"]
+                        has_pred_fields = all(field in first_pred for field in pred_fields)
                         
                         if has_pred_fields:
-                            details = f"AI prediction generated for {symbol} with all timeframes and analysis"
+                            details = f"Betty generated {len(predictions)} predictions with full reasoning"
                         else:
                             success = False
-                            details = "Prediction missing price or confidence fields"
+                            details = "Predictions missing required fields"
                     else:
                         success = False
-                        details = "Missing required prediction timeframes"
+                        details = f"Expected 3 predictions, got {len(predictions) if isinstance(predictions, list) else 'invalid format'}"
                 else:
                     success = False
                     details = "Response missing required fields"
             else:
                 details = f"Status code: {response.status_code}"
                 
-            self.log_test(f"AI Prediction ({symbol})", success, details, response.text if not success else None)
+            self.log_test("Betty Predictions with Auth", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Betty Predictions with Auth", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_auth_me_endpoint(self, session_token):
+        """Test the auth/me endpoint"""
+        try:
+            headers = {"Authorization": f"Bearer {session_token}"}
+            response = requests.get(f"{self.api_url}/auth/me", headers=headers, timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                required_fields = ["id", "email", "name"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    details = f"User authenticated: {data['name']} ({data['email']})"
+                else:
+                    success = False
+                    details = "User data missing required fields"
+            else:
+                details = f"Status code: {response.status_code}"
+                
+            self.log_test("Auth Me Endpoint", success, details, response.text if not success else None)
             return success
             
         except Exception as e:
-            self.log_test(f"AI Prediction ({symbol})", False, f"Error: {str(e)}")
+            self.log_test("Auth Me Endpoint", False, f"Error: {str(e)}")
             return False
 
     def run_comprehensive_test(self):
