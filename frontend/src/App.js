@@ -414,7 +414,7 @@ function App() {
                   <div className="text-center py-6">
                     {user ? (
                       <div>
-                        <Crystal className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+                        <Gem className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
                         <p className="text-slate-300 mb-3">Ready to see Betty's predictions?</p>
                         <Button 
                           onClick={fetchBettyPredictions}
