@@ -129,7 +129,7 @@ function App() {
 
   const fetchBettyPredictions = async () => {
     if (!user) {
-      handleLogin();
+      handleShowLogin();
       return;
     }
     
@@ -145,7 +145,7 @@ function App() {
       if (error.response?.status === 401) {
         // Clear user state if unauthorized
         setUser(null);
-        handleLogin();
+        handleShowLogin();
       }
     } finally {
       setLoadingBetty(false);
