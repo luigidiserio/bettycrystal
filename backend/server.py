@@ -968,6 +968,9 @@ async def get_betty_predictions(user: User = Depends(require_auth)):
         existing_report = await db.betty_reports.find_one({"week_start": current_monday})
         
         if existing_report:
+            # Remove MongoDB ObjectId for JSON serialization
+            if "_id" in existing_report:
+                del existing_report["_id"]
             return existing_report
         
         # Generate new predictions
