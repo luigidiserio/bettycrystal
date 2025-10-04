@@ -709,6 +709,73 @@ function App() {
         )}
       </div>
 
+      {/* Login Form Modal */}
+      {showLoginForm && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <Card className="w-full max-w-md mx-4 bg-gradient-to-br from-slate-900/95 to-slate-800/95 border border-emerald-500/30">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-white text-center">
+                Sign In to Betty Crystal
+              </CardTitle>
+              <p className="text-slate-400 text-center">Access premium predictions and insights</p>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    name="username"
+                    value={loginForm.username}
+                    onChange={handleLoginFormChange}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                    placeholder="Enter username"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={loginForm.password}
+                    onChange={handleLoginFormChange}
+                    className="w-full px-3 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500"
+                    placeholder="Enter password"
+                    required
+                  />
+                </div>
+                <div className="bg-slate-800/50 p-3 rounded-lg">
+                  <p className="text-xs text-slate-400 mb-2">Demo Credentials:</p>
+                  <p className="text-xs text-emerald-400">• demo / demo</p>
+                  <p className="text-xs text-emerald-400">• betty / crystal</p>
+                </div>
+                <div className="flex space-x-3">
+                  <Button
+                    type="submit"
+                    className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                  >
+                    Sign In
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setShowLoginForm(false)}
+                    variant="outline"
+                    className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       {/* Footer */}
       <footer className="bg-gradient-to-r from-slate-900/90 via-emerald-950/10 to-slate-900/90 border-t border-emerald-800/20 mt-16">
         <div className="container mx-auto px-6 py-8">
