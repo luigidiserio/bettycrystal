@@ -173,7 +173,12 @@ function App() {
         const response = await axios.get(`${API}/auth/me`, {
           withCredentials: true
         });
-        setUser(response.data.user);
+        const userData = response.data;
+        setUser({
+          ...userData,
+          name: userData.username === 'demo' ? 'Demo User' : 'Betty Lover',
+          isPremium: userData.is_premium
+        });
       } catch (error) {
         // No active session, user remains null
         console.log('No active session');
