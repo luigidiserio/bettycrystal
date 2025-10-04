@@ -64,7 +64,9 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${API}/auth/logout`);
+      await axios.post(`${API}/auth/logout`, {}, {
+        withCredentials: true
+      });
       setUser(null);
       setBettyPredictions(null);
       setShowBettyPredictions(false);
