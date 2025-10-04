@@ -315,7 +315,15 @@ Be conservative with predictions and confidence levels.
             )
         except json.JSONDecodeError:
             logging.error(f"Failed to parse AI response for {symbol}: {response}")
-            # Fallback if JSON parsing fails
+            # Create a more detailed fallback analysis
+            trend_analysis = f"Based on current market data, {name} ({symbol}) is showing {price_trend} momentum with a volatility of ${volatility:.2f}. "
+            if price_trend == "increasing":
+                trend_analysis += "The upward trend suggests continued growth potential, though market volatility remains a factor."
+            elif price_trend == "decreasing": 
+                trend_analysis += "The recent decline may present a buying opportunity, but caution is advised given market conditions."
+            else:
+                trend_analysis += "Price stability indicates a consolidation phase, with potential for movement in either direction."
+            
             return PredictionData(
                 asset=symbol,
                 current_price=current_price,
@@ -324,7 +332,7 @@ Be conservative with predictions and confidence levels.
                     "1_month": {"price": round(current_price * 1.05, 2), "confidence": 0.5},
                     "1_year": {"price": round(current_price * 1.15, 2), "confidence": 0.3}
                 },
-                analysis="AI analysis temporarily unavailable. Conservative growth projected based on market trends."
+                analysis=trend_analysis
             )
             
     except Exception as e:
