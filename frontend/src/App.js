@@ -27,6 +27,11 @@ function App() {
   const [bettyPredictions, setBettyPredictions] = useState(null);
   const [showBettyPredictions, setShowBettyPredictions] = useState(false);
   const [loadingBetty, setLoadingBetty] = useState(false);
+  
+  // Asset analysis states (restore original functionality)
+  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [historicalData, setHistoricalData] = useState([]);
+  const [assetPrediction, setAssetPrediction] = useState(null);
 
   // Betty's mock accuracy for demo (in real app, this would come from backend)
   const [bettyAccuracy] = useState({
