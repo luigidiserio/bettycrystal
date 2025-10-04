@@ -1312,6 +1312,15 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+@app.on_event("startup")
+async def startup_event():
+    """Initialize Betty's historical data on server startup"""
+    try:
+        await initialize_betty_history()
+        logging.info("Betty's historical data initialized on startup")
+    except Exception as e:
+        logging.error(f"Error initializing Betty's data on startup: {e}")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
