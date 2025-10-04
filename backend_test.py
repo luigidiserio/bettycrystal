@@ -304,8 +304,8 @@ class BettyCrystalTester:
             return False
 
     def run_comprehensive_test(self):
-        """Run all backend tests"""
-        print("🚀 Starting Financial Dashboard Backend Tests")
+        """Run all Betty Crystal backend tests"""
+        print("🔮 Starting Betty Crystal Backend Tests")
         print("=" * 60)
         
         # Test API health first
@@ -313,40 +313,49 @@ class BettyCrystalTester:
             print("❌ API is not accessible. Stopping tests.")
             return False
         
-        # Test all data endpoints
+        # Test all market data endpoints (Betty needs these for predictions)
         currencies_success, currencies_data = self.test_currencies_endpoint()
         crypto_success, crypto_data = self.test_crypto_endpoint()
         metals_success, metals_data = self.test_metals_endpoint()
         
-        # Test historical data for different asset types
-        historical_crypto_success = self.test_historical_data("BTC", "crypto")
-        historical_currency_success = self.test_historical_data("CADUSD=X", "currency")
-        historical_metals_success = self.test_historical_data("GC=F", "metals")
+        # Test Betty Crystal specific endpoints
+        betty_status_success, betty_status_data = self.test_betty_current_week()
+        betty_auth_protection_success = self.test_betty_predictions_without_auth()
         
-        # Test AI predictions (these take longer)
-        ai_crypto_success = self.test_ai_prediction("BTC", "crypto")
-        ai_currency_success = self.test_ai_prediction("CADUSD=X", "currency")
+        # Test authentication system
+        session_success, session_token = self.create_test_session()
+        
+        auth_me_success = False
+        betty_predictions_success = False
+        
+        if session_success and session_token:
+            auth_me_success = self.test_auth_me_endpoint(session_token)
+            betty_predictions_success, predictions_data = self.test_betty_predictions_with_auth(session_token)
         
         # Print summary
         print("=" * 60)
-        print(f"📊 Test Summary: {self.tests_passed}/{self.tests_run} tests passed")
+        print(f"🔮 Betty Crystal Test Summary: {self.tests_passed}/{self.tests_run} tests passed")
         print(f"Success Rate: {(self.tests_passed/self.tests_run)*100:.1f}%")
         
         # Identify critical failures
         critical_failures = []
-        if not currencies_success:
-            critical_failures.append("Currencies endpoint failed")
-        if not crypto_success:
-            critical_failures.append("Crypto endpoint failed")
-        if not metals_success:
-            critical_failures.append("Metals endpoint failed")
-        if not ai_crypto_success and not ai_currency_success:
-            critical_failures.append("AI prediction system completely failed")
+        if not currencies_success or not crypto_success or not metals_success:
+            critical_failures.append("Market data endpoints failed (Betty needs these for predictions)")
+        if not betty_status_success:
+            critical_failures.append("Betty's status endpoint failed")
+        if not betty_auth_protection_success:
+            critical_failures.append("Betty's predictions not properly protected by authentication")
+        if not session_success:
+            critical_failures.append("Authentication system failed")
+        if session_success and not betty_predictions_success:
+            critical_failures.append("Betty's AI prediction generation failed")
             
         if critical_failures:
             print("\n🚨 Critical Issues Found:")
             for failure in critical_failures:
                 print(f"   - {failure}")
+        else:
+            print("\n✅ All Betty Crystal systems operational!")
         
         return len(critical_failures) == 0
 
