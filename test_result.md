@@ -176,25 +176,31 @@ frontend:
     implemented: true
     working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 1
+    stuck_count: 2
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "Frontend has asset selection logic and chart components but clicking on crypto cards doesn't trigger analysis panel. Crypto cards may not be displaying properly."
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL ISSUE: Frontend React app not rendering due to CoinGecko API rate limiting (429 error). /api/crypto returns empty array causing frontend to get stuck in loading state. Currencies (7 items) and metals (4 items) endpoints working. Frontend HTML loads but JavaScript not executing properly due to missing crypto data."
         
   - task: "Betty historical data interface"
-    implemented: false
-    working: "NA"
+    implemented: true
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Need to implement Betty's historical picks display component. Backend has data available via /api/betty/history."
+      - working: false
+        agent: "testing"
+        comment: "IMPLEMENTED but NOT WORKING: Betty historical interface is implemented in code (showBettyHistory modal, fetchBettyHistory function) but cannot be tested due to React app not rendering. Same root cause as crypto issue - API rate limiting preventing proper app initialization."
 
 metadata:
   created_by: "main_agent"
