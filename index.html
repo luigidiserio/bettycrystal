@@ -107,36 +107,56 @@
             </div>
             
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Last Week's Performance -->
+                <!-- Free Market Outlook -->
                 <div>
                     <h4 class="font-semibold text-white mb-3 flex items-center gap-2">
-                        ⭐ Last Week's Performance
+                        🎯 This Week's Market Outlook (Free)
                     </h4>
                     
-                    <div id="betty-performance">
-                        <div class="text-center py-6">
-                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto mb-2"></div>
-                            <p class="text-slate-400">Loading Betty's performance...</p>
+                    <div class="space-y-3">
+                        <p class="text-sm text-slate-300 mb-3">Betty's general market analysis for this week:</p>
+                        
+                        <div class="p-3 bg-slate-800/50 rounded-lg">
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                📈 <strong>Crypto:</strong> Bitcoin showing bullish momentum with institutional interest growing. Expect volatility but upward bias.
+                            </p>
+                        </div>
+                        
+                        <div class="p-3 bg-slate-800/50 rounded-lg">
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                💰 <strong>Currencies:</strong> CAD facing pressure from dovish Bank of Canada stance. USD strength continuing.
+                            </p>
+                        </div>
+                        
+                        <div class="p-3 bg-slate-800/50 rounded-lg">
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                🥇 <strong>Metals:</strong> Gold benefiting from uncertainty, safe-haven flows expected to continue.
+                            </p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- This Week's Predictions -->
+                <!-- Betty's Top 3 Picks (Gated) -->
                 <div>
                     <h4 class="font-semibold text-white mb-3 flex items-center gap-2">
-                        👑 This Week's Predictions
+                        👑 Betty's Top 3 Picks (Premium)
                     </h4>
                     
                     <div class="text-center py-6">
                         <svg class="w-8 h-8 text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
                         </svg>
-                        <p class="text-slate-400 mb-3">Sign in to unlock Betty's weekly predictions</p>
+                        <p class="text-slate-400 mb-3">Sign in to see Betty's specific picks</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-xs text-slate-500">• "Bitcoin will go UP 3% or more by end of week"</p>
+                            <p class="text-xs text-slate-500">• "CAD will lose at least 1 cent by end of week"</p>
+                            <p class="text-xs text-slate-500">• "Gold will rise 2% or more by end of week"</p>
+                        </div>
                         <button 
                             onclick="handleLogin()"
                             class="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
                         >
-                            Sign In for Predictions
+                            🏆 Unlock Betty's Picks
                         </button>
                     </div>
                 </div>
