@@ -208,7 +208,7 @@ async def fetch_currencies():
         return []
 
 async def fetch_crypto():
-    """Fetch top 7 cryptocurrencies from CoinGecko"""
+    """Fetch specific cryptocurrencies from CoinGecko (BTC, ETH, BNB, SOL, XRP, DOT, ADA, DOGE)"""
     try:
         # Get specific coins instead of top 7 by market cap
         coin_ids = "bitcoin,ethereum,binancecoin,solana,ripple,polkadot,cardano,dogecoin"
