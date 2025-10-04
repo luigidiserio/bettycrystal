@@ -320,7 +320,7 @@ async def fetch_crypto():
             
             return cryptos
         elif response.status_code == 429:
-            logging.warning(f"CoinGecko API rate limited (429), using fallback data")
+            logging.warning("CoinGecko API rate limited (429), using fallback data")
             return get_fallback_crypto_data()
         else:
             logging.error(f"CoinGecko API error: {response.status_code}, using fallback data")
