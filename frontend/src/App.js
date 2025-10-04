@@ -815,7 +815,7 @@ function App() {
                   </a>
                 </li>
                 <li>
-                  <a href="#market-data" className="text-slate-400 hover:text-cyan-400 text-sm transition-colors">
+                  <a href="#market-data" className="text-slate-400 hover:text-emerald-400 text-sm transition-colors">
                     Market Data
                   </a>
                 </li>
@@ -823,7 +823,7 @@ function App() {
                   <li>
                     <button 
                       onClick={handleShowLogin}
-                      className="text-cyan-400 hover:text-cyan-300 text-sm transition-colors"
+                      className="text-emerald-400 hover:text-emerald-300 text-sm transition-colors"
                     >
                       Sign In for Premium
                     </button>
