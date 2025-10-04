@@ -33,6 +33,9 @@ function App() {
   const [bettyHistory, setBettyHistory] = useState(null);
   const [showBettyPredictions, setShowBettyPredictions] = useState(false);
   const [showBettyHistory, setShowBettyHistory] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [premiumInsights, setPremiumInsights] = useState(null);
+  const [portfolioAnalysis, setPortfolioAnalysis] = useState(null);
   const [loadingBetty, setLoadingBetty] = useState(false);
   
   // Asset analysis states (restore original functionality)
