@@ -303,6 +303,139 @@ class BettyCrystalTester:
             self.log_test("Auth Me Endpoint", False, f"Error: {str(e)}")
             return False
 
+    def test_auth_me_without_token(self):
+        """Test the auth/me endpoint without authentication (should return 401)"""
+        try:
+            response = requests.get(f"{self.api_url}/auth/me", timeout=10)
+            success = response.status_code == 401  # Should be unauthorized
+            
+            if success:
+                details = "Correctly requires authentication (401 Unauthorized)"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 401)"
+                
+            self.log_test("Auth Me Without Token", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Auth Me Without Token", False, f"Error: {str(e)}")
+            return False
+
+    def test_historical_data_endpoint(self):
+        """Test historical data endpoint for Bitcoin"""
+        try:
+            response = requests.get(f"{self.api_url}/historical/BTC?asset_type=crypto", timeout=20)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                required_fields = ["symbol", "asset_type", "data", "period", "last_updated"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    historical_data = data["data"]
+                    if isinstance(historical_data, list) and len(historical_data) > 0:
+                        # Check data structure
+                        first_point = historical_data[0]
+                        data_fields = ["timestamp", "price"]
+                        has_data_fields = all(field in first_point for field in data_fields)
+                        
+                        if has_data_fields and data["symbol"] == "BTC":
+                            details = f"BTC historical data: {len(historical_data)} data points, period: {data['period']}"
+                        else:
+                            success = False
+                            details = "Historical data points missing required fields or wrong symbol"
+                    else:
+                        success = False
+                        details = "No historical data points returned"
+                else:
+                    success = False
+                    details = "Response missing required fields"
+            else:
+                details = f"Status code: {response.status_code}"
+                
+            self.log_test("Historical Data Endpoint (BTC)", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Historical Data Endpoint (BTC)", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_prediction_endpoint(self):
+        """Test prediction endpoint for Bitcoin"""
+        try:
+            print("Testing Bitcoin AI prediction generation (this may take 15-30 seconds)...")
+            response = requests.get(f"{self.api_url}/predict/BTC?asset_type=crypto", timeout=45)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                required_fields = ["symbol", "asset_type", "current_price", "prediction", "generated_at"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    prediction = data["prediction"]
+                    pred_fields = ["analysis", "probability", "confidence", "timeframes"]
+                    has_pred_fields = all(field in prediction for field in pred_fields)
+                    
+                    if has_pred_fields and data["symbol"] == "BTC":
+                        details = f"BTC prediction generated: {prediction['confidence']} confidence, {prediction['probability']}% probability"
+                    else:
+                        success = False
+                        details = "Prediction data missing required fields or wrong symbol"
+                else:
+                    success = False
+                    details = "Response missing required fields"
+            else:
+                details = f"Status code: {response.status_code}"
+                
+            self.log_test("Prediction Endpoint (BTC)", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Prediction Endpoint (BTC)", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_betty_history_endpoint(self):
+        """Test Betty's historical performance endpoint"""
+        try:
+            response = requests.get(f"{self.api_url}/betty/history", timeout=15)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                required_fields = ["total_predictions", "total_correct", "overall_accuracy", "weekly_results"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    weekly_results = data["weekly_results"]
+                    if isinstance(weekly_results, list) and len(weekly_results) > 0:
+                        # Check weekly result structure
+                        first_week = weekly_results[0]
+                        week_fields = ["week_start", "predictions", "correct_count", "total_count", "week_accuracy"]
+                        has_week_fields = all(field in first_week for field in week_fields)
+                        
+                        if has_week_fields:
+                            details = f"Betty history: {data['overall_accuracy']}% accuracy, {data['total_predictions']} total predictions, {len(weekly_results)} weeks"
+                        else:
+                            success = False
+                            details = "Weekly results missing required fields"
+                    else:
+                        success = False
+                        details = "No weekly results returned"
+                else:
+                    success = False
+                    details = "Response missing required fields"
+            else:
+                details = f"Status code: {response.status_code}"
+                
+            self.log_test("Betty History Endpoint", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Betty History Endpoint", False, f"Error: {str(e)}")
+            return False, {}
+
     def run_comprehensive_test(self):
         """Run all Betty Crystal backend tests"""
         print("🔮 Starting Betty Crystal Backend Tests")
