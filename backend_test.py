@@ -324,8 +324,10 @@ class BettyCrystalTester:
             
             if success:
                 data = response.json()
-                required_fields = ["id", "email", "username"]
-                has_required_fields = all(field in data for field in required_fields)
+                # Check for either "id" or "_id" field (MongoDB uses _id)
+                has_id = "id" in data or "_id" in data
+                required_fields = ["email", "username"]
+                has_required_fields = all(field in data for field in required_fields) and has_id
                 
                 if has_required_fields:
                     details = f"User authenticated: {data['username']} ({data['email']})"
