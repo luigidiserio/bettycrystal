@@ -374,9 +374,114 @@
         };
         
         // Authentication
-        function handleLogin() {
-            const redirectUrl = encodeURIComponent(window.location.origin + '/index.html');
-            window.location.href = `${AUTH_URL}/?redirect=${redirectUrl}`;
+        function showLoginForm() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+        
+        function hideLoginForm() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+        }
+        
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Demo credentials
+            if ((username === 'demo' && password === 'demo') || 
+                (username === 'betty' && password === 'crystal')) {
+                currentUser = {
+                    name: username === 'demo' ? 'Demo User' : 'Betty Lover',
+                    isPremium: true
+                };
+                hideLoginForm();
+                updateAuthUI();
+                showPremiumContent();
+            } else {
+                alert('Invalid credentials. Try: demo/demo or betty/crystal');
+            }
+        }
+        
+        function handleLogout() {
+            currentUser = null;
+            updateAuthUI();
+            hidePremiumContent();
+        }
+        
+        function updateAuthUI() {
+            const loginBtn = document.getElementById('login-btn');
+            if (currentUser) {
+                loginBtn.innerHTML = `Logout (${currentUser.name})`;
+                loginBtn.onclick = handleLogout;
+            } else {
+                loginBtn.innerHTML = 'Sign In';
+                loginBtn.onclick = showLoginForm;
+            }
+        }
+        
+        function showPremiumContent() {
+            // Show premium content when logged in
+            const premiumSection = document.getElementById('premium-content');
+            if (premiumSection) {
+                premiumSection.innerHTML = `
+                    <div class="mb-4 p-3 bg-emerald-900/20 border border-emerald-500/30 rounded-lg">
+                        <p class="text-emerald-400 text-sm flex items-center gap-2">
+                            👑 Premium Access Unlocked! Welcome ${currentUser.name}
+                        </p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-gradient-to-br from-emerald-900/30 to-teal-900/30 border border-emerald-500/30 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-white font-bold">Bitcoin (BTC)</span>
+                                <span class="text-emerald-400">📈 UP 3%+</span>
+                            </div>
+                            <p class="text-xs text-slate-300">Strong institutional adoption signals suggest upward momentum.</p>
+                        </div>
+                        
+                        <div class="p-3 bg-gradient-to-br from-red-900/30 to-orange-900/30 border border-red-500/30 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-white font-bold">Canadian Dollar (CAD)</span>
+                                <span class="text-red-400">📉 DOWN 1¢+</span>
+                            </div>
+                            <p class="text-xs text-slate-300">Bank of Canada dovish stance creating downward pressure.</p>
+                        </div>
+                        
+                        <div class="p-3 bg-gradient-to-br from-yellow-900/30 to-amber-900/30 border border-yellow-500/30 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-white font-bold">Gold (GLD)</span>
+                                <span class="text-yellow-400">📈 UP 2%+</span>
+                            </div>
+                            <p class="text-xs text-slate-300">Global uncertainty driving safe-haven demand for precious metals.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function hidePremiumContent() {
+            const premiumSection = document.getElementById('premium-content');
+            if (premiumSection) {
+                premiumSection.innerHTML = `
+                    <div class="text-center py-6">
+                        <svg class="w-8 h-8 text-slate-500 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        <p class="text-slate-400 mb-3">Sign in to see Betty's specific picks</p>
+                        <div class="space-y-2 mb-4">
+                            <p class="text-xs text-slate-500">• "Bitcoin will go UP 3% or more by end of week"</p>
+                            <p class="text-xs text-slate-500">• "CAD will lose at least 1 cent by end of week"</p>
+                            <p class="text-xs text-slate-500">• "Gold will rise 2% or more by end of week"</p>
+                        </div>
+                        <button 
+                            onclick="showLoginForm()"
+                            class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-lg font-medium transition-all duration-200 transform hover:scale-105"
+                        >
+                            🏆 Unlock Betty's Picks
+                        </button>
+                    </div>
+                `;
+            }
         }
         
         // Scroll to top function
