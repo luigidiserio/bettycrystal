@@ -1062,20 +1062,26 @@ function App() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="bg-gradient-to-br from-emerald-900/20 to-emerald-800/20 border border-emerald-500/30">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-emerald-400">{bettyAccuracy.overall}%</div>
+                  <div className="text-2xl font-bold text-emerald-400">
+                    {bettyHistory?.overall_accuracy || bettyAccuracy.overall}%
+                  </div>
                   <div className="text-sm text-slate-400">Overall Accuracy</div>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-blue-900/20 to-blue-800/20 border border-blue-500/30">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-blue-400">{bettyAccuracy.totalPredictions}</div>
+                  <div className="text-2xl font-bold text-blue-400">
+                    {bettyHistory?.total_predictions || bettyAccuracy.totalPredictions}
+                  </div>
                   <div className="text-sm text-slate-400">Total Predictions</div>
                 </CardContent>
               </Card>
               <Card className="bg-gradient-to-br from-amber-900/20 to-amber-800/20 border border-amber-500/30">
                 <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-amber-400">{bettyAccuracy.streak}</div>
-                  <div className="text-sm text-slate-400">Current Streak</div>
+                  <div className="text-2xl font-bold text-amber-400">
+                    {bettyHistory?.total_correct || bettyAccuracy.streak}
+                  </div>
+                  <div className="text-sm text-slate-400">Total Correct</div>
                 </CardContent>
               </Card>
             </div>
