@@ -1,0 +1,72 @@
+{
+  "timestamp": "2025-10-04T17:25:30.403549",
+  "total_tests": 9,
+  "passed_tests": 7,
+  "success_rate": 77.77777777777779,
+  "overall_success": false,
+  "detailed_results": [
+    {
+      "test_name": "API Health Check",
+      "success": true,
+      "details": "API version: 2.0.0",
+      "timestamp": "2025-10-04T17:25:22.236510",
+      "response_data": null
+    },
+    {
+      "test_name": "Currencies Endpoint",
+      "success": true,
+      "details": "Found 7 currencies, CAD included, all required fields present",
+      "timestamp": "2025-10-04T17:25:22.668543",
+      "response_data": null
+    },
+    {
+      "test_name": "Crypto Endpoint",
+      "success": true,
+      "details": "Found 7 cryptos, major cryptos included, all required fields present",
+      "timestamp": "2025-10-04T17:25:22.886145",
+      "response_data": null
+    },
+    {
+      "test_name": "Metals Endpoint",
+      "success": true,
+      "details": "Found 4 metals, all required metals included, all required fields present",
+      "timestamp": "2025-10-04T17:25:23.106556",
+      "response_data": null
+    },
+    {
+      "test_name": "Betty Current Week Status",
+      "success": true,
+      "details": "Betty status: Ready for new predictions!, Has predictions: False",
+      "timestamp": "2025-10-04T17:25:23.185269",
+      "response_data": null
+    },
+    {
+      "test_name": "Betty Predictions Auth Protection",
+      "success": true,
+      "details": "Correctly requires authentication (401 Unauthorized)",
+      "timestamp": "2025-10-04T17:25:23.220766",
+      "response_data": null
+    },
+    {
+      "test_name": "Create Test Session",
+      "success": true,
+      "details": "Test session created for user: Test User",
+      "timestamp": "2025-10-04T17:25:23.278715",
+      "response_data": null
+    },
+    {
+      "test_name": "Auth Me Endpoint",
+      "success": false,
+      "details": "User data missing required fields",
+      "timestamp": "2025-10-04T17:25:23.315151",
+      "response_data": "{\"_id\":\"test-user-1759598723\",\"email\":\"test.user.1759598723@example.com\",\"name\":\"Test User\",\"picture\":\"https://via.placeholder.com/150\",\"created_at\":\"2025-10-04T17:25:23.255000\"}"
+    },
+    {
+      "test_name": "Betty Predictions with Auth",
+      "success": false,
+      "details": "Status code: 500",
+      "timestamp": "2025-10-04T17:25:30.402665",
+      "response_data": "{\"detail\":\"Failed to get predictions\"}"
+    }
+  ]
+}
