@@ -5,21 +5,116 @@ import { Card, CardContent, CardHeader, CardTitle } from './components/ui/card';
 import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Bitcoin, Coins, Gem, BarChart3, Activity, Zap, Eye } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { TrendingUp, TrendingDown, DollarSign, Bitcoin, Coins, Gem, BarChart3, Activity, Zap, Eye, Crystal, Star, Lock, LogOut, User, Crown } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+const AUTH_URL = 'https://auth.emergentagent.com';
 
 function App() {
   const [currencies, setCurrencies] = useState([]);
   const [crypto, setCrypto] = useState([]);
   const [metals, setMetals] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedAsset, setSelectedAsset] = useState(null);
-  const [historicalData, setHistoricalData] = useState([]);
-  const [prediction, setPrediction] = useState(null);
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('crypto');
+  
+  // Betty Crystal states
+  const [bettyCurrentWeek, setBettyCurrentWeek] = useState(null);
+  const [bettyPredictions, setBettyPredictions] = useState(null);
+  const [showBettyPredictions, setShowBettyPredictions] = useState(false);
+  const [loadingBetty, setLoadingBetty] = useState(false);
+
+  // Authentication functions
+  const checkAuthStatus = async () => {
+    try {
+      const response = await axios.get(`${API}/auth/me`);
+      setUser(response.data);
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleLogin = () => {
+    const redirectUrl = encodeURIComponent(window.location.origin);
+    window.location.href = `${AUTH_URL}/?redirect=${redirectUrl}`;
+  };
+
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${API}/auth/logout`);
+      setUser(null);
+      setBettyPredictions(null);
+      setShowBettyPredictions(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const processSessionId = async (sessionId) => {
+    try {
+      const response = await axios.get(
+        'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data',
+        { headers: { 'X-Session-ID': sessionId } }
+      );
+      
+      // Create session in our backend
+      await axios.post(`${API}/auth/session`, response.data);
+      
+      // Clean URL and check auth status
+      window.history.replaceState({}, document.title, window.location.pathname);
+      await checkAuthStatus();
+    } catch (error) {
+      console.error('Session processing error:', error);
+      setAuthLoading(false);
+    }
+  };
+
+  // Betty Crystal functions
+  const fetchBettyCurrentWeek = async () => {
+    try {
+      const response = await axios.get(`${API}/betty/current-week`);
+      setBettyCurrentWeek(response.data);
+    } catch (error) {
+      console.error('Error fetching Betty data:', error);
+    }
+  };
+
+  const fetchBettyPredictions = async () => {
+    if (!user) {
+      handleLogin();
+      return;
+    }
+    
+    try {
+      setLoadingBetty(true);
+      const response = await axios.get(`${API}/betty/predictions`);
+      setBettyPredictions(response.data);
+      setShowBettyPredictions(true);
+    } catch (error) {
+      console.error('Error fetching Betty predictions:', error);
+    } finally {
+      setLoadingBetty(false);
+    }
+  };
+
+  // Initialize app
+  useEffect(() => {
+    // Check for session ID in URL fragment
+    const urlFragment = window.location.hash.substring(1);
+    const params = new URLSearchParams(urlFragment);
+    const sessionId = params.get('session_id');
+    
+    if (sessionId) {
+      processSessionId(sessionId);
+    } else {
+      checkAuthStatus();
+    }
+  }, []);
 
   // Fetch market data
   useEffect(() => {
@@ -43,54 +138,24 @@ function App() {
     };
 
     fetchData();
+    fetchBettyCurrentWeek();
     
     // Auto-refresh every 5 minutes
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    const interval = setInterval(() => {
+      fetchData();
+      fetchBettyCurrentWeek();
+    }, 5 * 60 * 1000);
+    
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch historical data and predictions for selected asset
-  const handleAssetSelect = async (asset, type) => {
-    try {
-      setSelectedAsset({ ...asset, type });
-      
-      // Get symbol for API call
-      let symbol = asset.symbol;
-      if (type === 'currency') {
-        symbol = asset.symbol.replace('USD=X', '').replace('=X', '');
-      } else if (type === 'metals') {
-        symbol = asset.symbol.replace('=F', '');
-      }
-      
-      const [historicalRes, predictionRes] = await Promise.all([
-        axios.get(`${API}/historical/${symbol}?asset_type=${type}`),
-        axios.get(`${API}/predict/${symbol}?asset_type=${type}`)
-      ]);
-      
-      // Format historical data for charts
-      const formattedData = historicalRes.data.data.map((item, index) => ({
-        time: new Date(item.timestamp).toLocaleDateString('en-US', { 
-          month: 'short', day: 'numeric', hour: '2-digit' 
-        }),
-        price: item.price,
-        index
-      }));
-      
-      setHistoricalData(formattedData);
-      setPrediction(predictionRes.data);
-    } catch (error) {
-      console.error('Error fetching asset details:', error);
-    }
-  };
-
   // Asset card component
-  const AssetCard = ({ asset, type, onClick }) => {
+  const AssetCard = ({ asset, type }) => {
     const isPositive = asset.change_percent >= 0;
     
     return (
       <Card 
-        className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
-        onClick={() => onClick(asset, type)}
+        className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] bg-gradient-to-br from-slate-900/50 to-slate-800/50 border border-slate-700/50 backdrop-blur-sm"
         data-testid={`asset-card-${asset.symbol}`}
       >
         <CardContent className="p-4">
@@ -126,117 +191,97 @@ function App() {
     );
   };
 
-  // Chart component with predictions
-  const PredictionChart = ({ data, prediction }) => {
-    if (!data.length || !prediction) return null;
+  // Betty Crystal Icon Component
+  const BettyIcon = () => (
+    <div className="relative w-16 h-16 mx-auto mb-4">
+      {/* Crystal Ball */}
+      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-300 via-blue-300 to-cyan-300 opacity-80 animate-pulse"></div>
+      
+      {/* Inner glow */}
+      <div className="absolute inset-2 rounded-full bg-gradient-to-br from-white/30 to-transparent"></div>
+      
+      {/* Sparkles */}
+      <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-300 rounded-full animate-ping"></div>
+      <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-pink-300 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+      <div className="absolute top-1 left-1 w-1 h-1 bg-white rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
+    </div>
+  );
 
-    const lastPrice = data[data.length - 1].price;
-    const predictions = [
-      { 
-        time: '1W', 
-        price: prediction.predictions['1_week']?.price || lastPrice,
-        isPrediction: true,
-        confidence: prediction.predictions['1_week']?.confidence || 0.5
-      },
-      { 
-        time: '1M', 
-        price: prediction.predictions['1_month']?.price || lastPrice,
-        isPrediction: true,
-        confidence: prediction.predictions['1_month']?.confidence || 0.5
-      },
-      { 
-        time: '1Y', 
-        price: prediction.predictions['1_year']?.price || lastPrice,
-        isPrediction: true,
-        confidence: prediction.predictions['1_year']?.confidence || 0.3
-      }
-    ];
-
-    const chartData = [
-      ...data.slice(-20), // Last 20 historical points
-      ...predictions
-    ];
-
+  // Betty Prediction Card
+  const BettyPredictionCard = ({ prediction }) => {
+    const isUp = prediction.direction === 'up';
+    
     return (
-      <div className="space-y-4">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-            <XAxis dataKey="time" stroke="#64748b" fontSize={12} />
-            <YAxis stroke="#64748b" fontSize={12} />
-            <Tooltip 
-              contentStyle={{
-                backgroundColor: '#1e293b',
-                border: '1px solid #334155',
-                borderRadius: '8px',
-                color: '#f8fafc'
-              }}
-              formatter={(value, name) => [
-                `$${value.toLocaleString()}`,
-                name === 'price' ? 'Price' : name
-              ]}
-            />
-            <Line 
-              type="monotone" 
-              dataKey="price" 
-              stroke="#06b6d4" 
-              strokeWidth={2}
-              dot={(props) => {
-                if (props.payload?.isPrediction) {
-                  return (
-                    <circle 
-                      cx={props.cx} 
-                      cy={props.cy} 
-                      r={4} 
-                      fill="#f59e0b" 
-                      stroke="#fbbf24" 
-                      strokeWidth={2}
-                    />
-                  );
-                }
-                return <circle cx={props.cx} cy={props.cy} r={2} fill="#06b6d4" />;
-              }}
-              strokeDasharray={(entry) => entry?.isPrediction ? "5 5" : "0 0"}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-        
-        {/* Prediction details */}
-        <div className="grid grid-cols-3 gap-4">
-          {Object.entries(prediction.predictions).map(([timeframe, pred]) => (
-            <Card key={timeframe} className="bg-slate-800/50 border-slate-700">
-              <CardContent className="p-3 text-center">
-                <p className="text-slate-400 text-xs uppercase tracking-wide">
-                  {timeframe.replace('_', ' ')}
-                </p>
-                <p className="text-xl font-bold text-white">
-                  ${pred.price?.toLocaleString()}
-                </p>
-                <p className="text-xs text-slate-500">
-                  {Math.round(pred.confidence * 100)}% confidence
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        
-        {/* AI Analysis */}
-        <Card className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 border-purple-500/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-purple-300 flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              AI Market Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-slate-300 text-sm leading-relaxed">
-              {prediction.analysis}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 border border-purple-500/30">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-bold text-white">{prediction.asset_name}</h4>
+              <p className="text-purple-300 text-sm">{prediction.asset_symbol}</p>
+            </div>
+            {isUp ? 
+              <TrendingUp className="w-5 h-5 text-emerald-400" /> : 
+              <TrendingDown className="w-5 h-5 text-red-400" />
+            }
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-slate-400 text-sm">Current</span>
+              <span className="text-white font-semibold">${prediction.current_price.toLocaleString()}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-slate-400 text-sm">Target</span>
+              <span className={`font-bold ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
+                ${prediction.predicted_target_price.toLocaleString()}
+              </span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-slate-400 text-sm">Expected</span>
+              <Badge className={isUp ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/20 text-red-400"}>
+                {isUp ? '+' : '-'}{prediction.predicted_change_percent.toFixed(1)}%
+              </Badge>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-slate-400 text-sm">Confidence</span>
+              <div className="flex items-center space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star 
+                    key={i}
+                    className={`w-3 h-3 ${i < prediction.confidence_level * 5 ? 'text-yellow-400 fill-current' : 'text-slate-600'}`}
+                  />
+                ))}
+                <span className="text-xs text-slate-400 ml-2">
+                  {Math.round(prediction.confidence_level * 100)}%
+                </span>
+              </div>
+            </div>
+            
+            <div className="mt-3 p-3 bg-slate-800/50 rounded-lg">
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {prediction.reasoning}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <Activity className="w-12 h-12 text-cyan-400 mx-auto mb-4 animate-pulse" />
+          <p className="text-white text-xl font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -244,7 +289,7 @@ function App() {
         <div className="text-center">
           <Activity className="w-12 h-12 text-cyan-400 mx-auto mb-4 animate-pulse" />
           <p className="text-white text-xl font-semibold">Loading Market Data...</p>
-          <p className="text-slate-400 mt-2">Fetching real-time prices and predictions</p>
+          <p className="text-slate-400 mt-2">Fetching real-time prices and Betty's insights</p>
         </div>
       </div>
     );
@@ -265,18 +310,147 @@ function App() {
                 <p className="text-slate-400">Real-time market data & AI predictions</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-slate-400">Last updated</p>
-              <p className="text-white font-medium">{new Date().toLocaleTimeString()}</p>
+            
+            {/* User menu */}
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm text-slate-400">Last updated</p>
+                <p className="text-white font-medium">{new Date().toLocaleTimeString()}</p>
+              </div>
+              
+              {user ? (
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2 text-white">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">{user.name}</span>
+                  </div>
+                  <Button 
+                    onClick={handleLogout}
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-600 text-slate-300 hover:bg-slate-700"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  onClick={handleLogin}
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                >
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Market Data Panel */}
-          <div className="xl:col-span-2">
+        {/* Betty Crystal Section */}
+        <Card className="mb-8 bg-gradient-to-r from-purple-900/20 via-blue-900/20 to-cyan-900/20 border border-purple-500/30">
+          <CardHeader>
+            <div className="text-center">
+              <BettyIcon />
+              <CardTitle className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-300 to-cyan-300 bg-clip-text flex items-center justify-center gap-2">
+                <Crystal className="w-6 h-6 text-purple-400" />
+                Meet Betty Crystal
+              </CardTitle>
+              <p className="text-slate-400 mt-2">Your friendly AI trading mentor making weekly predictions</p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Last Week's Performance */}
+              <div>
+                <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                  <Star className="w-4 h-4 text-yellow-400" />
+                  Last Week's Performance
+                </h4>
+                
+                {bettyCurrentWeek?.last_week_report ? (
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg">
+                      <span className="text-slate-400">Accuracy Score</span>
+                      <span className="text-2xl font-bold text-emerald-400">
+                        {Math.round((bettyCurrentWeek.last_week_report.overall_accuracy || 0) * 100)}%
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      {bettyCurrentWeek.last_week_report.predictions?.slice(0, 3).map((pred, index) => (
+                        <div key={index} className="flex justify-between items-center p-2 bg-slate-800/30 rounded">
+                          <span className="text-sm text-slate-300">{pred.asset_name}</span>
+                          <Badge className="bg-slate-700 text-slate-300">
+                            {pred.direction === 'up' ? '↗️' : '↘️'} {pred.predicted_change_percent.toFixed(1)}%
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <Crystal className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                    <p className="text-slate-400">Betty is preparing her first predictions...</p>
+                  </div>
+                )}
+              </div>
+              
+              {/* This Week's Predictions */}
+              <div>
+                <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                  <Crown className="w-4 h-4 text-cyan-400" />
+                  This Week's Predictions
+                </h4>
+                
+                {showBettyPredictions && bettyPredictions ? (
+                  <div className="space-y-3">
+                    <p className="text-sm text-slate-300 mb-3">Week of {new Date(bettyPredictions.week_start).toLocaleDateString()}</p>
+                    {bettyPredictions.predictions.map((prediction, index) => (
+                      <BettyPredictionCard key={index} prediction={prediction} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    {user ? (
+                      <div>
+                        <Crystal className="w-8 h-8 text-cyan-400 mx-auto mb-3" />
+                        <p className="text-slate-300 mb-3">Ready to see Betty's predictions?</p>
+                        <Button 
+                          onClick={fetchBettyPredictions}
+                          disabled={loadingBetty}
+                          className="bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600"
+                        >
+                          {loadingBetty ? (
+                            <Activity className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Eye className="w-4 h-4 mr-2" />
+                          )}
+                          {loadingBetty ? 'Generating...' : 'View This Week\'s Predictions'}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <Lock className="w-8 h-8 text-slate-500 mx-auto mb-3" />
+                        <p className="text-slate-400 mb-3">Sign in to unlock Betty's weekly predictions</p>
+                        <Button 
+                          onClick={handleLogin}
+                          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+                        >
+                          Sign In for Predictions
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Market Data */}
+        <div className="grid grid-cols-1 gap-8">
+          <div>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-slate-800/50 border border-slate-700">
                 <TabsTrigger 
@@ -306,77 +480,41 @@ function App() {
               </TabsList>
 
               <TabsContent value="crypto" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {crypto.map((asset) => (
                     <AssetCard 
                       key={asset.symbol} 
                       asset={asset} 
-                      type="crypto" 
-                      onClick={handleAssetSelect}
+                      type="crypto"
                     />
                   ))}
                 </div>
               </TabsContent>
 
               <TabsContent value="currencies" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {currencies.map((asset) => (
                     <AssetCard 
                       key={asset.symbol} 
                       asset={asset} 
-                      type="currency" 
-                      onClick={handleAssetSelect}
+                      type="currency"
                     />
                   ))}
                 </div>
               </TabsContent>
 
               <TabsContent value="metals" className="mt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {metals.map((asset) => (
                     <AssetCard 
                       key={asset.symbol} 
                       asset={asset} 
-                      type="metals" 
-                      onClick={handleAssetSelect}
+                      type="metals"
                     />
                   ))}
                 </div>
               </TabsContent>
             </Tabs>
-          </div>
-
-          {/* Analysis Panel */}
-          <div className="xl:col-span-1">
-            <Card className="bg-slate-900/50 border-slate-700 h-fit">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-cyan-400" />
-                  Market Analysis
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {selectedAsset ? (
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <h3 className="text-xl font-bold text-white">{selectedAsset.name}</h3>
-                      <p className="text-slate-400">{selectedAsset.symbol}</p>
-                      <p className="text-3xl font-bold text-cyan-400 mt-2">
-                        ${selectedAsset.price.toLocaleString()}
-                      </p>
-                    </div>
-                    
-                    <PredictionChart data={historicalData} prediction={prediction} />
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <Coins className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                    <p className="text-slate-400">Select an asset to view</p>
-                    <p className="text-slate-500 text-sm mt-1">detailed analysis & predictions</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

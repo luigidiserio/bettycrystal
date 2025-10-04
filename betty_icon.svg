@@ -1,0 +1,67 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Crystal Ball Base -->
+  <defs>
+    <radialGradient id="crystalGradient" cx="0.3" cy="0.3" r="0.8">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.4"/>
+      <stop offset="30%" stop-color="#a855f7" stop-opacity="0.6"/>
+      <stop offset="60%" stop-color="#3b82f6" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0.3"/>
+    </radialGradient>
+    
+    <radialGradient id="innerGlow" cx="0.25" cy="0.25" r="0.5">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Main Crystal Ball -->
+  <circle cx="32" cy="32" r="28" fill="url(#crystalGradient)" filter="url(#glow)"/>
+  
+  <!-- Inner Glow -->
+  <circle cx="32" cy="32" r="18" fill="url(#innerGlow)"/>
+  
+  <!-- Mystical Sparkles -->
+  <circle cx="48" cy="16" r="3" fill="#fbbf24" opacity="0.8">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="16" cy="48" r="2" fill="#ec4899" opacity="0.8">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="24" cy="20" r="1" fill="#ffffff" opacity="1">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+  
+  <circle cx="44" cy="44" r="1.5" fill="#06b6d4" opacity="0.9">
+    <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" begin="1.5s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Betty's Mystical Symbols -->
+  <g opacity="0.6">
+    <!-- Star -->
+    <path d="M32 8 L34 14 L40 14 L35 18 L37 24 L32 20 L27 24 L29 18 L24 14 L30 14 Z" fill="#a855f7" opacity="0.4">
+      <animateTransform attributeName="transform" type="rotate" values="0 32 32;360 32 32" dur="8s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Crescent -->
+    <path d="M48 32 C44 28, 44 36, 48 32" fill="#06b6d4" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" values="0 48 32;-360 48 32" dur="12s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Base Stand -->
+  <ellipse cx="32" cy="56" rx="20" ry="4" fill="#1e293b" opacity="0.6"/>
+  <ellipse cx="32" cy="55" rx="18" ry="3" fill="#374151" opacity="0.8"/>
+  
+  <!-- Reflection Highlight -->
+  <ellipse cx="26" cy="26" rx="8" ry="12" fill="#ffffff" opacity="0.15" transform="rotate(-30 26 26)"/>
+</svg>
