@@ -857,6 +857,16 @@ async def initialize_betty_history():
         
         # Insert historical predictions
         all_predictions = week1_predictions + week2_predictions
+        
+        # Convert datetime objects to strings for MongoDB
+        for pred in all_predictions:
+            if isinstance(pred.get('week_start'), datetime):
+                pred['week_start'] = pred['week_start']
+            if isinstance(pred.get('created_at'), datetime):
+                pred['created_at'] = pred['created_at']
+            if isinstance(pred.get('evaluated_at'), datetime):
+                pred['evaluated_at'] = pred['evaluated_at']
+        
         await db.betty_predictions.insert_many(all_predictions)
         
         logging.info("Betty's historical data initialized: Week 1 (3/3), Week 2 (2/3)")
