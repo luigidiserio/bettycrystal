@@ -212,7 +212,7 @@ async def fetch_crypto():
     try:
         # Get specific coins instead of top 7 by market cap
         coin_ids = "bitcoin,ethereum,binancecoin,solana,ripple,polkadot,cardano,dogecoin"
-        url = f"https://api.coingecko.com/api/v3/coins/markets"
+        url = "https://api.coingecko.com/api/v3/coins/markets"
         params = {
             "vs_currency": "usd",
             "ids": coin_ids,
