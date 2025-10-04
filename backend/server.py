@@ -384,9 +384,17 @@ Respond in this JSON format:
         user_message = UserMessage(text=prompt)
         response = await chat.send_message(user_message)
         
-        # Parse response
+        # Parse response - handle markdown code blocks
         try:
-            ai_data = json.loads(response)
+            # Remove markdown code blocks if present
+            response_text = response.strip()
+            if response_text.startswith("```json"):
+                response_text = response_text[7:]  # Remove ```json
+            if response_text.endswith("```"):
+                response_text = response_text[:-3]  # Remove ```
+            response_text = response_text.strip()
+            
+            ai_data = json.loads(response_text)
             predictions = []
             
             week_start = await get_monday_of_week()
