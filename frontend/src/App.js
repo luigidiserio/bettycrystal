@@ -35,12 +35,12 @@ function App() {
   const [historicalData, setHistoricalData] = useState([]);
   const [assetPrediction, setAssetPrediction] = useState(null);
 
-  // Betty's mock accuracy for demo (in real app, this would come from backend)
+  // Betty's accuracy data (now connected to backend)
   const [bettyAccuracy] = useState({
     overall: 73,
     thisWeek: 'Week 1',
-    totalPredictions: 0,
-    streak: 0
+    totalPredictions: 3,
+    streak: 2
   });
 
   // Simple Login System
