@@ -43,59 +43,44 @@ function App() {
     streak: 0
   });
 
-  // Authentication functions
-  const checkAuthStatus = async () => {
-    try {
-      const response = await axios.get(`${API}/auth/me`, {
-        withCredentials: true
-      });
-      console.log('Auth check response:', response.data);
-      setUser(response.data);
-    } catch (error) {
-      console.log('Auth check failed:', error);
-      setUser(null);
-    } finally {
-      setAuthLoading(false);
+  // Simple Login System
+  const handleShowLogin = () => {
+    setShowLoginForm(true);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    
+    // Simple demo login - in production this would call your auth API
+    if (loginForm.username && loginForm.password) {
+      // Demo credentials
+      if ((loginForm.username === 'demo' && loginForm.password === 'demo') || 
+          (loginForm.username === 'betty' && loginForm.password === 'crystal')) {
+        setUser({
+          name: loginForm.username === 'demo' ? 'Demo User' : 'Betty Lover',
+          email: `${loginForm.username}@example.com`,
+          isPremium: true
+        });
+        setShowLoginForm(false);
+        setLoginForm({ username: '', password: '' });
+      } else {
+        alert('Invalid credentials. Try: demo/demo or betty/crystal');
+      }
     }
   };
 
-  const handleLogin = () => {
-    const redirectUrl = encodeURIComponent(window.location.origin);
-    window.location.href = `${AUTH_URL}/?redirect=${redirectUrl}`;
+  const handleLogout = () => {
+    setUser(null);
+    setBettyPredictions(null);
+    setShowBettyPredictions(false);
+    setShowLoginForm(false);
   };
 
-  const handleLogout = async () => {
-    try {
-      await axios.post(`${API}/auth/logout`, {}, {
-        withCredentials: true
-      });
-      setUser(null);
-      setBettyPredictions(null);
-      setShowBettyPredictions(false);
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  const processSessionId = async (sessionId) => {
-    try {
-      const response = await axios.get(
-        'https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data',
-        { headers: { 'X-Session-ID': sessionId } }
-      );
-      
-      // Create session in our backend
-      await axios.post(`${API}/auth/session`, response.data, {
-        withCredentials: true
-      });
-      
-      // Clean URL and check auth status
-      window.history.replaceState({}, document.title, window.location.pathname);
-      await checkAuthStatus();
-    } catch (error) {
-      console.error('Session processing error:', error);
-      setAuthLoading(false);
-    }
+  const handleLoginFormChange = (e) => {
+    setLoginForm({
+      ...loginForm,
+      [e.target.name]: e.target.value
+    });
   };
 
   // Asset analysis functions (restored)
