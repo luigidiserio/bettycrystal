@@ -88,6 +88,40 @@ function App() {
     }
   };
 
+  // Asset analysis functions (restored)
+  const handleAssetSelect = async (asset, type) => {
+    try {
+      setSelectedAsset({ ...asset, type });
+      
+      // Get symbol for API call
+      let symbol = asset.symbol;
+      if (type === 'currency') {
+        symbol = asset.symbol.replace('USD=X', '').replace('=X', '');
+      } else if (type === 'metals') {
+        symbol = asset.symbol.replace('=F', '');
+      }
+      
+      const [historicalRes, predictionRes] = await Promise.all([
+        axios.get(`${API}/historical/${symbol}?asset_type=${type}`),
+        axios.get(`${API}/predict/${symbol}?asset_type=${type}`)
+      ]);
+      
+      // Format historical data for charts
+      const formattedData = historicalRes.data.data.map((item, index) => ({
+        time: new Date(item.timestamp).toLocaleDateString('en-US', { 
+          month: 'short', day: 'numeric', hour: '2-digit' 
+        }),
+        price: item.price,
+        index
+      }));
+      
+      setHistoricalData(formattedData);
+      setAssetPrediction(predictionRes.data);
+    } catch (error) {
+      console.error('Error fetching asset details:', error);
+    }
+  };
+
   // Betty Crystal functions
   const fetchBettyCurrentWeek = async () => {
     try {
