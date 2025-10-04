@@ -148,11 +148,18 @@ function App() {
     
     try {
       setLoadingBetty(true);
-      const response = await axios.get(`${API}/betty/predictions`);
+      const response = await axios.get(`${API}/betty/predictions`, {
+        withCredentials: true
+      });
       setBettyPredictions(response.data);
       setShowBettyPredictions(true);
     } catch (error) {
       console.error('Error fetching Betty predictions:', error);
+      if (error.response?.status === 401) {
+        // Clear user state if unauthorized
+        setUser(null);
+        handleLogin();
+      }
     } finally {
       setLoadingBetty(false);
     }
