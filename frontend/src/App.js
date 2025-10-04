@@ -490,7 +490,7 @@ function App() {
                       <p className="text-xs text-slate-500">• Detailed reasoning</p>
                     </div>
                     <Button 
-                      onClick={handleLogin}
+                      onClick={handleShowLogin}
                       className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
                     >
                       <Award className="w-4 h-4 mr-2" />
