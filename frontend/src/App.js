@@ -196,6 +196,15 @@ function App() {
     }
   };
 
+  const fetchBettyHistory = async () => {
+    try {
+      const response = await axios.get(`${API}/betty/history`);
+      setBettyHistory(response.data);
+    } catch (error) {
+      console.error('Error fetching Betty history:', error);
+    }
+  };
+
   const fetchBettyPredictions = async () => {
     if (!user) {
       handleShowLogin();
@@ -209,6 +218,9 @@ function App() {
       });
       setBettyPredictions(response.data);
       setShowBettyPredictions(true);
+      
+      // Also fetch history when user is authenticated
+      await fetchBettyHistory();
     } catch (error) {
       console.error('Error fetching Betty predictions:', error);
       if (error.response?.status === 401) {
