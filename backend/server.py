@@ -514,9 +514,96 @@ def is_cache_expired(last_updated):
     return datetime.now(timezone.utc) - last_updated > timedelta(minutes=CACHE_EXPIRY_MINUTES)
 
 # Authentication Endpoints
+@api_router.post("/auth/register")
+async def register_user(username: str, email: str, password: str):
+    """Register a new user account"""
+    try:
+        # Check if user already exists
+        existing_user = await db.users.find_one({"$or": [{"username": username}, {"email": email}]})
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Username or email already exists")
+        
+        # Hash password (in production, use proper password hashing)
+        import hashlib
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        
+        # Create user
+        user_id = str(uuid.uuid4())
+        user_doc = {
+            "_id": user_id,
+            "username": username,
+            "email": email,
+            "password_hash": password_hash,
+            "is_premium": False,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.users.insert_one(user_doc)
+        
+        return {"message": "Account created successfully", "user_id": user_id}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error registering user: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create account")
+
+@api_router.post("/auth/login")
+async def login_user(username: str, password: str, response: Response):
+    """Login user with username/password"""
+    try:
+        # Hash password for comparison
+        import hashlib
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        
+        # Find user
+        user_doc = await db.users.find_one({
+            "username": username,
+            "password_hash": password_hash
+        })
+        
+        if not user_doc:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Create session
+        session_token = str(uuid.uuid4())
+        session_doc = {
+            "user_id": user_doc["_id"],
+            "session_token": session_token,
+            "expires_at": datetime.now(timezone.utc) + timedelta(days=7),
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.user_sessions.insert_one(session_doc)
+        
+        # Set httpOnly cookie
+        response.set_cookie(
+            key="session_token",
+            value=session_token,
+            max_age=7*24*60*60,  # 7 days
+            httponly=True,
+            secure=False,  # Set to False for localhost testing
+            samesite="lax",
+            path="/"
+        )
+        
+        return {
+            "message": "Login successful",
+            "user": {
+                "id": user_doc["_id"],
+                "username": user_doc["username"],
+                "email": user_doc["email"],
+                "is_premium": user_doc.get("is_premium", False)
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error logging in: {e}")
+        raise HTTPException(status_code=500, detail="Login failed")
+
 @api_router.post("/auth/session")
 async def create_session(session_data: dict, response: Response):
-    """Create user session from Emergent OAuth"""
+    """Create user session from Emergent OAuth (legacy)"""
     try:
         # Extract user data
         user_id = session_data.get("id")
