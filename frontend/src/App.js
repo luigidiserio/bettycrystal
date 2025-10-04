@@ -560,6 +560,7 @@ function App() {
                       key={asset.symbol} 
                       asset={asset} 
                       type="metals"
+                      onClick={handleAssetSelect}
                     />
                   ))}
                 </div>
