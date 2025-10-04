@@ -214,14 +214,14 @@ class BettyCrystalTester:
             password = "testpassword123"
             
             # Register user
-            register_data = {
+            register_params = {
                 "username": username,
                 "email": email,
                 "password": password
             }
             
             register_response = requests.post(f"{self.api_url}/auth/register", 
-                                            data=register_data, timeout=10)
+                                            params=register_params, timeout=10)
             
             if register_response.status_code != 200:
                 self.log_test("Create Test Session", False, 
