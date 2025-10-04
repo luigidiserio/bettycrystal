@@ -99,6 +99,48 @@ function App() {
     });
   };
 
+  const handleShowSignUp = () => {
+    setShowSignUpForm(true);
+    setShowLoginForm(false);
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    
+    if (signUpForm.password !== signUpForm.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    
+    try {
+      const response = await axios.post(`${API}/auth/register`, {
+        username: signUpForm.username,
+        email: signUpForm.email,
+        password: signUpForm.password
+      });
+      
+      alert('Account created successfully! Please log in.');
+      setShowSignUpForm(false);
+      setShowLoginForm(true);
+      setSignUpForm({ username: '', email: '', password: '', confirmPassword: '' });
+      
+    } catch (error) {
+      if (error.response?.data?.detail) {
+        alert(error.response.data.detail);
+      } else {
+        console.error('Sign up error:', error);
+        alert('Sign up failed. Please try again.');
+      }
+    }
+  };
+
+  const handleSignUpFormChange = (e) => {
+    setSignUpForm({
+      ...signUpForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
   // Asset analysis functions (restored)
   const handleAssetSelect = async (asset, type) => {
     try {
