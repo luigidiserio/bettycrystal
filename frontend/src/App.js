@@ -1154,6 +1154,19 @@ function App() {
                     Cancel
                   </Button>
                 </div>
+                
+                <div className="text-center pt-4 border-t border-slate-700">
+                  <p className="text-sm text-slate-400 mb-2">Don't have an account?</p>
+                  <Button
+                    type="button"
+                    onClick={handleShowSignUp}
+                    variant="outline"
+                    className="w-full border-purple-500/50 text-purple-300 hover:bg-purple-900/30 hover:border-purple-400"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Create New Account
+                  </Button>
+                </div>
               </form>
             </CardContent>
           </Card>
