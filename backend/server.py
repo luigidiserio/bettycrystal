@@ -414,7 +414,7 @@ async def get_prediction(symbol: str, asset_type: str = "crypto"):
             asset_data = next((m for m in metals_data if symbol.upper() in m.symbol), None)
         
         if not asset_data:
-            raise HTTPException(status_code=404, message=f"Asset {symbol} not found")
+            raise HTTPException(status_code=404, detail=f"Asset {symbol} not found")
         
         historical = await get_historical_data(symbol, asset_type)
         prediction = await generate_ai_prediction(
