@@ -35,11 +35,11 @@ function App() {
   const [historicalData, setHistoricalData] = useState([]);
   const [assetPrediction, setAssetPrediction] = useState(null);
 
-  // Betty's accuracy data (now connected to backend)
-  const [bettyAccuracy] = useState({
-    overall: 73,
-    thisWeek: 'Week 1',
-    totalPredictions: 3,
+  // Betty's accuracy data (loaded from backend)
+  const [bettyAccuracy, setBettyAccuracy] = useState({
+    overall: 83.3,  // 5/6 predictions correct
+    thisWeek: 'Week 3',
+    totalPredictions: 6,
     streak: 2
   });
 
