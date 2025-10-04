@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 import time
 
-class FinancialDashboardTester:
+class BettyCrystalTester:
     def __init__(self, base_url="https://forex-crypto-metals.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
