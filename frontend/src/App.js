@@ -21,7 +21,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [signUpForm, setSignUpForm] = useState({ username: '', email: '', password: '', confirmPassword: '' });
   const [activeTab, setActiveTab] = useState('crypto');
   
   // Betty Crystal states
