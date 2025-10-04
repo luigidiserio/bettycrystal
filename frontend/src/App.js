@@ -745,6 +745,148 @@ function App() {
           </CardContent>
         </Card>
 
+        {/* Premium Features Section */}
+        {user && (
+          <Card className="bg-gradient-to-br from-purple-900/30 to-indigo-900/30 border border-purple-500/30 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold text-transparent bg-gradient-to-r from-purple-300 via-pink-300 to-amber-300 bg-clip-text flex items-center justify-center gap-2">
+                <Crown className="w-6 h-6 text-amber-400" />
+                {user.isPremium ? "Premium Dashboard" : "Upgrade to Premium"}
+              </CardTitle>
+              {user.isPremium ? (
+                <p className="text-slate-400 text-center">Access Betty's exclusive premium features</p>
+              ) : (
+                <p className="text-slate-400 text-center">Unlock advanced insights, portfolio analysis, and exclusive trading strategies</p>
+              )}
+            </CardHeader>
+            <CardContent>
+              {user.isPremium ? (
+                // Premium User Interface
+                <div className="space-y-6">
+                  {/* Premium Features Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button
+                      onClick={fetchPremiumInsights}
+                      disabled={loadingBetty}
+                      className="h-20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    >
+                      <div className="text-center">
+                        <Zap className="w-5 h-5 mx-auto mb-1" />
+                        <div className="text-sm font-semibold">Premium Insights</div>
+                        <div className="text-xs opacity-80">Advanced Market Analysis</div>
+                      </div>
+                    </Button>
+                    
+                    <Button
+                      onClick={fetchPortfolioAnalysis}
+                      disabled={loadingBetty}
+                      className="h-20 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
+                    >
+                      <div className="text-center">
+                        <Target className="w-5 h-5 mx-auto mb-1" />
+                        <div className="text-sm font-semibold">Portfolio Analysis</div>
+                        <div className="text-xs opacity-80">Risk & Optimization</div>
+                      </div>
+                    </Button>
+                  </div>
+
+                  {/* Premium Content Display */}
+                  {premiumInsights && (
+                    <Card className="bg-slate-800/50 border border-purple-500/30">
+                      <CardHeader>
+                        <CardTitle className="text-lg text-purple-300">🔮 Premium Market Insights</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-sm text-slate-300 whitespace-pre-line">
+                          {premiumInsights.content}
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {premiumInsights.premium_features?.map((feature, index) => (
+                            <Badge key={index} className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {portfolioAnalysis && (
+                    <Card className="bg-slate-800/50 border border-indigo-500/30">
+                      <CardHeader>
+                        <CardTitle className="text-lg text-indigo-300">📊 Portfolio Analysis</CardTitle>
+                        <div className="flex gap-4 text-sm">
+                          <span className="text-slate-400">Risk Score: 
+                            <span className="text-indigo-400 font-semibold ml-1">{portfolioAnalysis.risk_score}/10</span>
+                          </span>
+                          <span className="text-slate-400">Diversification: 
+                            <span className="text-emerald-400 font-semibold ml-1">{portfolioAnalysis.diversification_score}/10</span>
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          {portfolioAnalysis.recommendations?.map((rec, index) => (
+                            <div key={index} className="p-3 bg-slate-700/30 rounded border border-slate-600">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="font-semibold text-white">{rec.asset}</span>
+                                  <span className={`ml-2 px-2 py-1 text-xs rounded ${
+                                    rec.action === 'BUY' ? 'bg-emerald-500/20 text-emerald-400' :
+                                    rec.action === 'SELL' ? 'bg-red-500/20 text-red-400' :
+                                    'bg-yellow-500/20 text-yellow-400'
+                                  }`}>
+                                    {rec.action}
+                                  </span>
+                                </div>
+                                <span className="text-indigo-400 font-semibold">{rec.allocation}</span>
+                              </div>
+                              <p className="text-xs text-slate-400 mt-1">{rec.reasoning}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              ) : (
+                // Non-Premium User Interface
+                <div className="text-center space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div className="p-4 bg-purple-900/20 rounded-lg border border-purple-500/30">
+                      <Zap className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                      <h4 className="font-semibold text-white text-sm">Advanced Insights</h4>
+                      <p className="text-xs text-slate-400">Deep market analysis & predictions</p>
+                    </div>
+                    <div className="p-4 bg-indigo-900/20 rounded-lg border border-indigo-500/30">
+                      <Target className="w-8 h-8 text-indigo-400 mx-auto mb-2" />
+                      <h4 className="font-semibold text-white text-sm">Portfolio Optimizer</h4>
+                      <p className="text-xs text-slate-400">Risk assessment & allocation</p>
+                    </div>
+                    <div className="p-4 bg-pink-900/20 rounded-lg border border-pink-500/30">
+                      <Crown className="w-8 h-8 text-pink-400 mx-auto mb-2" />
+                      <h4 className="font-semibold text-white text-sm">Exclusive Strategies</h4>
+                      <p className="text-xs text-slate-400">VIP trading recommendations</p>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => setShowPremiumModal(true)}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-3"
+                  >
+                    <Crown className="w-4 h-4 mr-2" />
+                    Upgrade to Premium - $9.99/month
+                  </Button>
+                  
+                  <p className="text-xs text-slate-500">
+                    ✨ 30-day money back guarantee • Cancel anytime • Exclusive Betty features
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Market Data */}
         <div className="grid grid-cols-1 gap-8">
           <div>
