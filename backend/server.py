@@ -81,15 +81,6 @@ class PredictionData(BaseModel):
     analysis: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-# User Management Models
-class User(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    username: str
-    email: str
-    password_hash: str
-    is_premium: bool = False
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
 # Betty Crystal Models
 class BettyPrediction(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
