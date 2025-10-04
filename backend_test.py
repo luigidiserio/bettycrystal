@@ -451,11 +451,17 @@ class BettyCrystalTester:
         crypto_success, crypto_data = self.test_crypto_endpoint()
         metals_success, metals_data = self.test_metals_endpoint()
         
+        # Test asset analysis endpoints
+        historical_success, historical_data = self.test_historical_data_endpoint()
+        prediction_success, prediction_data = self.test_prediction_endpoint()
+        
         # Test Betty Crystal specific endpoints
         betty_status_success, betty_status_data = self.test_betty_current_week()
+        betty_history_success, betty_history_data = self.test_betty_history_endpoint()
         betty_auth_protection_success = self.test_betty_predictions_without_auth()
         
-        # Test authentication system
+        # Test authentication endpoints
+        auth_me_no_token_success = self.test_auth_me_without_token()
         session_success, session_token = self.create_test_session()
         
         auth_me_success = False
@@ -474,10 +480,18 @@ class BettyCrystalTester:
         critical_failures = []
         if not currencies_success or not crypto_success or not metals_success:
             critical_failures.append("Market data endpoints failed (Betty needs these for predictions)")
+        if not historical_success:
+            critical_failures.append("Historical data endpoint failed (required for asset analysis)")
+        if not prediction_success:
+            critical_failures.append("Prediction endpoint failed (required for asset analysis)")
         if not betty_status_success:
             critical_failures.append("Betty's status endpoint failed")
+        if not betty_history_success:
+            critical_failures.append("Betty's history endpoint failed")
         if not betty_auth_protection_success:
             critical_failures.append("Betty's predictions not properly protected by authentication")
+        if not auth_me_no_token_success:
+            critical_failures.append("Auth/me endpoint not properly protected")
         if not session_success:
             critical_failures.append("Authentication system failed")
         if session_success and not betty_predictions_success:
