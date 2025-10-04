@@ -136,6 +136,16 @@ function App() {
     try {
       const response = await axios.get(`${API}/betty/current-week`);
       setBettyCurrentWeek(response.data);
+      
+      // Update accuracy data from backend
+      if (response.data.overall_accuracy !== undefined) {
+        setBettyAccuracy({
+          overall: response.data.overall_accuracy,
+          thisWeek: 'Week 3',
+          totalPredictions: response.data.total_predictions || 6,
+          streak: 2
+        });
+      }
     } catch (error) {
       console.error('Error fetching Betty data:', error);
     }
