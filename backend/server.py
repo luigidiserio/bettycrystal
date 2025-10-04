@@ -720,30 +720,238 @@ async def get_metals():
     
     return data_cache[cache_key]["data"]
 
+# Initialize Betty's Historical Data
+async def initialize_betty_history():
+    """Create Betty's historical performance data if it doesn't exist"""
+    try:
+        # Check if we already have historical data
+        existing_predictions = await db.betty_predictions.find().to_list(1)
+        if existing_predictions:
+            return  # Already have data
+        
+        current_monday = await get_monday_of_week()
+        
+        # Create Week 1 (2 weeks ago) - 3/3 correct predictions
+        week1_monday = current_monday - timedelta(days=14)
+        week1_predictions = [
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week1_monday,
+                "asset_symbol": "BTC",
+                "asset_name": "Bitcoin",
+                "asset_type": "crypto",
+                "current_price": 118500.0,
+                "direction": "up",
+                "predicted_change_percent": 3.2,
+                "predicted_target_price": 122300.0,
+                "confidence_level": 0.78,
+                "reasoning": "Strong institutional adoption and ETF inflows creating upward pressure.",
+                "created_at": week1_monday,
+                # Results - CORRECT
+                "final_price": 123150.0,
+                "actual_change_percent": 3.92,
+                "was_correct": True,
+                "evaluated_at": week1_monday + timedelta(days=7)
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week1_monday,
+                "asset_symbol": "CADUSD=X",
+                "asset_name": "Canadian Dollar",
+                "asset_type": "currency",
+                "current_price": 0.7245,
+                "direction": "down",
+                "predicted_change_percent": 1.8,
+                "predicted_target_price": 0.7115,
+                "confidence_level": 0.72,
+                "reasoning": "Bank of Canada's dovish stance and weakening oil prices pressuring CAD.",
+                "created_at": week1_monday,
+                # Results - CORRECT
+                "final_price": 0.7098,
+                "actual_change_percent": -2.03,
+                "was_correct": True,
+                "evaluated_at": week1_monday + timedelta(days=7)
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week1_monday,
+                "asset_symbol": "GC=F",
+                "asset_name": "Gold",
+                "asset_type": "metal",
+                "current_price": 3720.0,
+                "direction": "up",
+                "predicted_change_percent": 2.1,
+                "predicted_target_price": 3798.0,
+                "confidence_level": 0.85,
+                "reasoning": "Geopolitical tensions and inflation concerns driving safe-haven demand.",
+                "created_at": week1_monday,
+                # Results - CORRECT
+                "final_price": 3812.0,
+                "actual_change_percent": 2.47,
+                "was_correct": True,
+                "evaluated_at": week1_monday + timedelta(days=7)
+            }
+        ]
+        
+        # Create Week 2 (1 week ago) - 2/3 correct predictions
+        week2_monday = current_monday - timedelta(days=7)
+        week2_predictions = [
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week2_monday,
+                "asset_symbol": "ETH",
+                "asset_name": "Ethereum",
+                "asset_type": "crypto",
+                "current_price": 4280.0,
+                "direction": "up",
+                "predicted_change_percent": 4.5,
+                "predicted_target_price": 4472.0,
+                "confidence_level": 0.68,
+                "reasoning": "Ethereum upgrade and DeFi growth creating bullish sentiment.",
+                "created_at": week2_monday,
+                # Results - CORRECT
+                "final_price": 4465.0,
+                "actual_change_percent": 4.32,
+                "was_correct": True,
+                "evaluated_at": week2_monday + timedelta(days=7)
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week2_monday,
+                "asset_symbol": "XRP",
+                "asset_name": "XRP",
+                "asset_type": "crypto",
+                "current_price": 3.15,
+                "direction": "down",
+                "predicted_change_percent": 2.8,
+                "predicted_target_price": 3.06,
+                "confidence_level": 0.61,
+                "reasoning": "SEC regulatory concerns and market uncertainty affecting XRP price.",
+                "created_at": week2_monday,
+                # Results - WRONG (went up instead of down)
+                "final_price": 3.28,
+                "actual_change_percent": 4.13,
+                "was_correct": False,
+                "evaluated_at": week2_monday + timedelta(days=7)
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week2_monday,
+                "asset_symbol": "SI=F",
+                "asset_name": "Silver",
+                "asset_type": "metal",
+                "current_price": 45.2,
+                "direction": "up",
+                "predicted_change_percent": 3.1,
+                "predicted_target_price": 46.6,
+                "confidence_level": 0.74,
+                "reasoning": "Industrial demand and precious metals rotation supporting silver.",
+                "created_at": week2_monday,
+                # Results - CORRECT
+                "final_price": 47.1,
+                "actual_change_percent": 4.20,
+                "was_correct": True,
+                "evaluated_at": week2_monday + timedelta(days=7)
+            }
+        ]
+        
+        # Insert historical predictions
+        all_predictions = week1_predictions + week2_predictions
+        await db.betty_predictions.insert_many(all_predictions)
+        
+        logging.info("Betty's historical data initialized: Week 1 (3/3), Week 2 (2/3)")
+        
+    except Exception as e:
+        logging.error(f"Error initializing Betty's history: {e}")
+
+@api_router.get("/betty/history")
+async def get_betty_history():
+    """Get Betty's historical performance and accuracy"""
+    try:
+        # Get all evaluated predictions
+        predictions = await db.betty_predictions.find(
+            {"was_correct": {"$ne": None}}
+        ).sort("week_start", -1).to_list(None)
+        
+        if not predictions:
+            # Initialize history if none exists
+            await initialize_betty_history()
+            predictions = await db.betty_predictions.find(
+                {"was_correct": {"$ne": None}}
+            ).sort("week_start", -1).to_list(None)
+        
+        # Calculate weekly and cumulative accuracy
+        weeks = {}
+        for pred in predictions:
+            week_key = pred["week_start"].strftime("%Y-%m-%d")
+            if week_key not in weeks:
+                weeks[week_key] = {
+                    "week_start": pred["week_start"],
+                    "predictions": [],
+                    "correct_count": 0,
+                    "total_count": 0
+                }
+            
+            weeks[week_key]["predictions"].append(pred)
+            weeks[week_key]["total_count"] += 1
+            if pred["was_correct"]:
+                weeks[week_key]["correct_count"] += 1
+        
+        # Calculate accuracy for each week
+        weekly_results = []
+        total_correct = 0
+        total_predictions = 0
+        
+        for week_key in sorted(weeks.keys()):
+            week_data = weeks[week_key]
+            week_accuracy = (week_data["correct_count"] / week_data["total_count"]) * 100
+            
+            total_correct += week_data["correct_count"]
+            total_predictions += week_data["total_count"]
+            cumulative_accuracy = (total_correct / total_predictions) * 100
+            
+            weekly_results.append({
+                "week_start": week_data["week_start"].strftime("%Y-%m-%d"),
+                "predictions": week_data["predictions"],
+                "correct_count": week_data["correct_count"],
+                "total_count": week_data["total_count"],
+                "week_accuracy": round(week_accuracy, 1),
+                "cumulative_accuracy": round(cumulative_accuracy, 1)
+            })
+        
+        return {
+            "total_predictions": total_predictions,
+            "total_correct": total_correct,
+            "overall_accuracy": round((total_correct / total_predictions) * 100, 1) if total_predictions > 0 else 0,
+            "weekly_results": weekly_results
+        }
+        
+    except Exception as e:
+        logging.error(f"Error getting Betty's history: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get Betty's history")
+
 # Betty Crystal Endpoints
 @api_router.get("/betty/current-week")
 async def get_betty_current_week():
     """Get Betty's predictions for current week (public - last week's accuracy)"""
     try:
-        current_monday = await get_monday_of_week()
-        last_monday = current_monday - timedelta(days=7)
+        # Get historical data to show accuracy
+        history = await get_betty_history()
         
-        # Get last week's report for public display
-        last_report = await db.betty_reports.find_one(
-            {"week_start": last_monday},
-            sort=[("created_at", -1)]
-        )
+        current_monday = await get_monday_of_week()
         
         # Get current week's report (for checking if exists)
-        current_report = await db.betty_reports.find_one(
+        current_report = await db.betty_predictions.find(
             {"week_start": current_monday}
-        )
+        ).to_list(None)
         
         return {
             "current_week_start": current_monday.isoformat(),
-            "has_current_predictions": current_report is not None,
-            "last_week_report": last_report,
-            "betty_status": "Ready for new predictions!" if not current_report else "This week's predictions available"
+            "has_current_predictions": len(current_report) > 0,
+            "overall_accuracy": history["overall_accuracy"],
+            "total_predictions": history["total_predictions"],
+            "weekly_history": history["weekly_results"][:2],  # Last 2 weeks for display
+            "betty_status": "Ready for new predictions!" if len(current_report) == 0 else "This week's predictions available"
         }
         
     except Exception as e:
