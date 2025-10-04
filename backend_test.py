@@ -286,11 +286,11 @@ class BettyCrystalTester:
             
             if success:
                 data = response.json()
-                required_fields = ["id", "email", "name"]
+                required_fields = ["id", "email", "username"]
                 has_required_fields = all(field in data for field in required_fields)
                 
                 if has_required_fields:
-                    details = f"User authenticated: {data['name']} ({data['email']})"
+                    details = f"User authenticated: {data['username']} ({data['email']})"
                 else:
                     success = False
                     details = "User data missing required fields"
