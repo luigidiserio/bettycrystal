@@ -526,6 +526,94 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-slate-900/80 border-t border-slate-700 mt-16">
+        <div className="container mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* About Betty Crystal */}
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <BettyCharacter size="small" />
+                <h3 className="text-xl font-bold text-white">About Betty Crystal</h3>
+              </div>
+              <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                Betty Crystal is your friendly AI trading mentor who combines advanced market analysis 
+                with mystical intuition to provide weekly predictions on cryptocurrencies, currencies, 
+                and precious metals.
+              </p>
+              <p className="text-slate-500 text-xs">
+                Betty learns from every prediction, constantly improving her accuracy 
+                to help you make better trading decisions.
+              </p>
+            </div>
+            
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li>
+                  <button 
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    className="text-slate-400 hover:text-cyan-400 text-sm transition-colors"
+                  >
+                    ↑ Top of Page
+                  </button>
+                </li>
+                <li>
+                  <a href="#betty-section" className="text-slate-400 hover:text-cyan-400 text-sm transition-colors">
+                    Betty's Predictions
+                  </a>
+                </li>
+                <li>
+                  <a href="#market-data" className="text-slate-400 hover:text-cyan-400 text-sm transition-colors">
+                    Market Data
+                  </a>
+                </li>
+                {!user && (
+                  <li>
+                    <button 
+                      onClick={handleLogin}
+                      className="text-cyan-400 hover:text-cyan-300 text-sm transition-colors"
+                    >
+                      Sign In for Premium
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </div>
+            
+            {/* Copyright & Legal */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
+              <div className="space-y-2">
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  © 2025 Betty Crystal Financial Dashboard. All rights reserved.
+                </p>
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  Powered by AI • Real-time market data
+                </p>
+                <p className="text-slate-600 text-xs leading-relaxed mt-4">
+                  <strong>Disclaimer:</strong> Betty's predictions are for educational purposes only. 
+                  Not financial advice. Trade at your own risk.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Bottom bar */}
+          <div className="border-t border-slate-700 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-slate-500 text-xs mb-4 md:mb-0">
+              Made with 💜 by Betty Crystal • AI-Powered Trading Predictions
+            </p>
+            <div className="flex items-center space-x-4">
+              <span className="text-slate-600 text-xs">Current Accuracy: {bettyAccuracy.overall}%</span>
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+              <span className="text-slate-600 text-xs">Live Data</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
