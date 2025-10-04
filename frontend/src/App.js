@@ -154,16 +154,8 @@ function App() {
 
   // Initialize app
   useEffect(() => {
-    // Check for session ID in URL fragment
-    const urlFragment = window.location.hash.substring(1);
-    const params = new URLSearchParams(urlFragment);
-    const sessionId = params.get('session_id');
-    
-    if (sessionId) {
-      processSessionId(sessionId);
-    } else {
-      checkAuthStatus();
-    }
+    // Simple initialization - no OAuth session handling needed
+    setAuthLoading(false);
   }, []);
 
   // Fetch market data
