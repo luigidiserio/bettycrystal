@@ -631,8 +631,13 @@ def is_cache_expired(last_updated):
     return datetime.now(timezone.utc) - last_updated > timedelta(minutes=CACHE_EXPIRY_MINUTES)
 
 # Authentication Endpoints
+class RegisterRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+
 @api_router.post("/auth/register")
-async def register_user(username: str, email: str, password: str):
+async def register_user(register_request: RegisterRequest):
     """Register a new user account"""
     try:
         # Check if user already exists
