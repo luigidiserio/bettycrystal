@@ -888,7 +888,7 @@ function App() {
                   </div>
                   
                   <Button 
-                    onClick={() => setShowPremiumModal(true)}
+                    onClick={() => setShowVerifyEmailModal(true)}
                     className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold px-8 py-3"
                   >
                     <Crown className="w-4 h-4 mr-2" />
