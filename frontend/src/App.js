@@ -254,87 +254,22 @@ function App() {
     }
   };
 
-  const upgradeToPremium = async () => {
+  // Email verification function
+  const verifyEmail = async (token) => {
     try {
-      if (!user) {
-        handleShowLogin();
-        return;
+      const response = await axios.post(`${API}/auth/verify-email?verification_token=${token}`);
+      alert(response.data.message);
+      
+      // Update user status
+      if (user) {
+        setUser(prev => ({ ...prev, emailVerified: true }));
       }
-
-      // Get current origin URL
-      const originUrl = window.location.origin;
-      
-      const response = await axios.post(`${API}/payments/create-checkout`, {
-        package_id: 'premium_monthly',
-        origin_url: originUrl
-      }, {
-        withCredentials: true
-      });
-      
-      // Redirect to Stripe Checkout
-      window.location.href = response.data.checkout_url;
-      
+      setShowVerifyEmailModal(false);
     } catch (error) {
-      console.error('Error creating checkout session:', error);
-      alert('Failed to create payment session. Please try again.');
+      console.error('Error verifying email:', error);
+      alert('Email verification failed. Please try again.');
     }
   };
-
-  // Payment status checking
-  const checkPaymentStatus = async (sessionId) => {
-    try {
-      const response = await axios.get(`${API}/payments/status/${sessionId}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error checking payment status:', error);
-      return null;
-    }
-  };
-
-  const pollPaymentStatus = async (sessionId, attempts = 0) => {
-    const maxAttempts = 10;
-    const pollInterval = 2000; // 2 seconds
-
-    if (attempts >= maxAttempts) {
-      alert('Payment status check timed out. Please refresh the page or contact support.');
-      return;
-    }
-
-    try {
-      const paymentData = await checkPaymentStatus(sessionId);
-      
-      if (paymentData?.payment_status === 'paid') {
-        // Payment successful - refresh user data
-        await fetchUserProfile();
-        setShowPremiumModal(false);
-        alert('Payment successful! Welcome to Betty Crystal Premium! 🎉');
-        return;
-      } else if (paymentData?.status === 'expired') {
-        alert('Payment session expired. Please try again.');
-        return;
-      }
-
-      // Continue polling if still pending
-      setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
-    } catch (error) {
-      console.error('Error during payment polling:', error);
-      setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
-    }
-  };
-
-  // Check for payment return on component mount
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionId = urlParams.get('session_id');
-    
-    if (sessionId) {
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-      
-      // Start polling for payment status
-      pollPaymentStatus(sessionId);
-    }
-  }, []);
 
   const fetchBettyPredictions = async () => {
     if (!user) {
