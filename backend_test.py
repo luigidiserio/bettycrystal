@@ -480,13 +480,13 @@ class BettyCrystalTester:
     def test_payment_create_checkout_valid(self):
         """Test payment checkout creation with valid package_id"""
         try:
-            payload = {
+            params = {
                 "package_id": "premium_monthly",
                 "origin_url": self.base_url
             }
             
             response = requests.post(f"{self.api_url}/payments/create-checkout", 
-                                   json=payload, timeout=15)
+                                   params=params, timeout=15)
             success = response.status_code == 200
             
             if success:
