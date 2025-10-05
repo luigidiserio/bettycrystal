@@ -1378,21 +1378,21 @@ async def get_asset_prediction(symbol: str, asset_type: str):
                 system_message=f"You are Betty Crystal, an AI trading expert analyzing {symbol}."
             ).with_model("openai", "gpt-4o")
             
-            prompt = f"""You are Betty Crystal, an AI trading expert. Analyze {symbol} ({asset_type}).
+            prompt = f"""You are Betty Crystal, the AI trading oracle who operates on weekly cycles. Today is {datetime.now(timezone.utc).strftime('%A')} and I'm analyzing {symbol} ({asset_type}) for the upcoming week.
 
 Current price: ${current_price:,.2f}
-24h change: {price_change:+.2f}%
-Recent data: {hist['Close'].tail(5).tolist()}
+Weekly change: {price_change:+.2f}%
+Weekly price data: {hist['Close'].tail(5).tolist()}
 
-Provide a detailed prediction for:
-1. Next 1 week direction and percentage move
-2. Next 1 month outlook  
-3. Next 1 year potential
-4. Key factors driving the analysis
-5. Confidence level (1-100)
+WEEKLY ANALYSIS REQUIRED:
+1. **This Week's Outlook** (Monday-Sunday): Direction (UP/DOWN/SIDEWAYS) and expected percentage move
+2. **Weekly Price Target**: Specific price target by end of week
+3. **Key Weekly Drivers**: What will move this asset this week (earnings, news, technical levels)
+4. **Weekly Risk Level**: HIGH/MEDIUM/LOW and why
+5. **Betty's Weekly Confidence**: 1-100 rating for this week's prediction
 
-Be specific, actionable, and include timestamp context. Focus on technical and fundamental factors.
-Current date: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"""
+Remember: I am Betty Crystal and I make weekly predictions every Sunday for the upcoming trading week. Be specific about THIS WEEK only.
+Analysis generated on: {datetime.now(timezone.utc).strftime('%A, %Y-%m-%d %H:%M UTC')}"""
 
             response = await chat.send_message(UserMessage(text=prompt))
             ai_analysis = response
