@@ -14,7 +14,6 @@ import yfinance as yf
 import requests
 import asyncio
 from emergentintegrations.llm.chat import LlmChat, UserMessage
-from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 import json
 from enum import Enum
 
