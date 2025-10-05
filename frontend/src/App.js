@@ -1554,95 +1554,83 @@ function App() {
         </DialogContent>
       </Dialog>
 
-      {/* Premium Upgrade Modal */}
-      <Dialog open={showPremiumModal} onOpenChange={setShowPremiumModal}>
-        <DialogContent className="max-w-2xl bg-gradient-to-br from-slate-900 to-purple-900/50 border border-purple-500/30">
+      {/* Email Verification Modal */}
+      <Dialog open={showVerifyEmailModal} onOpenChange={setShowVerifyEmailModal}>
+        <DialogContent className="max-w-md bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700 text-white">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-white flex items-center gap-3">
-              <Crown className="w-8 h-8 text-amber-400" />
-              Upgrade to Betty Crystal Premium
+            <DialogTitle className="text-center text-2xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent">
+              Verify Your Email
             </DialogTitle>
-            <p className="text-slate-400">
-              Unlock Betty's most powerful features and advanced market intelligence
-            </p>
           </DialogHeader>
           
-          <div className="space-y-6">
-            {/* Premium Features List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <h4 className="font-semibold text-purple-300">🚀 Advanced Features</h4>
-                <ul className="space-y-2 text-sm text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                    Deep Market Analysis with AI
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                    Portfolio Risk Assessment
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                    Exclusive Trading Strategies
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
-                    Real-time Market Alerts
-                  </li>
-                </ul>
-              </div>
+          <div className="text-center py-6">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-green-500 flex items-center justify-center">
+              <Mail className="w-8 h-8 text-white" />
+            </div>
+            
+            <div className="space-y-3 mb-6">
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Complete Your 30-Day Trial Setup
+              </h3>
+              <p className="text-slate-300 text-sm mb-4">
+                Verify your email to unlock Betty's full weekly prediction system
+              </p>
               
-              <div className="space-y-3">
-                <h4 className="font-semibold text-indigo-300">📊 Exclusive Access</h4>
-                <ul className="space-y-2 text-sm text-slate-300">
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
-                    Betty's Premium Predictions
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
-                    Advanced Chart Analysis
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
-                    Priority Customer Support
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-indigo-400 rounded-full"></div>
-                    Monthly Strategy Reports
-                  </li>
-                </ul>
+              <div className="space-y-2 text-left">
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <Target className="w-4 h-4 text-blue-400" />
+                  <span>Betty's weekly predictions</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <BarChart3 className="w-4 h-4 text-blue-400" />
+                  <span>Advanced portfolio analysis</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <Award className="w-4 h-4 text-blue-400" />
+                  <span>30 days free access</span>
+                </div>
+                <div className="flex items-center space-x-2 text-slate-300">
+                  <Zap className="w-4 h-4 text-blue-400" />
+                  <span>Real-time market insights</span>
+                </div>
               </div>
             </div>
-
-            {/* Pricing */}
-            <div className="text-center p-6 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 rounded-lg border border-purple-500/30">
-              <div className="text-3xl font-bold text-white mb-2">$9.99<span className="text-lg text-slate-400">/month</span></div>
-              <p className="text-slate-400 text-sm mb-4">Cancel anytime • 30-day money back guarantee</p>
+            
+            <div className="border-t border-slate-700 pt-6">
+              <div className="text-2xl font-bold text-white mb-2">
+                Free for 30 Days
+              </div>
+              <p className="text-slate-400 text-sm mb-4">
+                {user?.trialActive ? 
+                  `${user.daysRemaining || 30} days remaining in your trial` :
+                  'Check your email for verification link'
+                }
+              </p>
               
               <div className="space-y-3">
                 <Button 
-                  onClick={() => setShowVerifyEmailModal(true)}
+                  onClick={() => {
+                    if (user?.emailVerified) {
+                      alert('Email already verified! You have full access.');
+                    } else {
+                      alert('Please check your email for the verification link.');
+                    }
+                    setShowVerifyEmailModal(false);
+                  }}
                   className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold py-3"
                 >
                   <Mail className="w-4 h-4 mr-2" />
-                  Verify Email for Full Access
+                  {user?.emailVerified ? 'Access Full Features' : 'Check Email for Link'}
                 </Button>
                 
                 <Button 
-                  onClick={() => setShowPremiumModal(false)}
+                  onClick={() => setShowVerifyEmailModal(false)}
                   variant="outline"
-                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-700"
+                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-800"
                 >
-                  Maybe Later
+                  Close
                 </Button>
               </div>
-            </div>
-
-            <div className="text-center">
-              <p className="text-xs text-slate-500">
-                🔒 Secure payment processing • ✨ Instant access after upgrade
-              </p>
             </div>
           </div>
         </DialogContent>
