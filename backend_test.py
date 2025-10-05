@@ -521,13 +521,13 @@ class BettyCrystalTester:
     def test_payment_create_checkout_invalid_package(self):
         """Test payment checkout creation with invalid package_id"""
         try:
-            params = {
+            data = {
                 "package_id": "invalid_package",
-                "origin_url": self.base_url
+                "origin_url": "http://localhost:3000"
             }
             
             response = requests.post(f"{self.api_url}/payments/create-checkout", 
-                                   params=params, timeout=15)
+                                   json=data, timeout=15)
             success = response.status_code in [400, 500]  # Backend returns 500 due to error handling
             
             if success:
