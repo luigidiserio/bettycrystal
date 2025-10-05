@@ -787,34 +787,174 @@ async def logout(request: Request, response: Response):
     response.delete_cookie("session_token", path="/")
     return {"message": "Logged out successfully"}
 
-@api_router.post("/auth/upgrade-to-premium", dependencies=[Depends(require_auth)])
-async def upgrade_to_premium(user: User = Depends(require_auth)):
-    """Upgrade user to premium (simplified - no actual payment processing)"""
+# Stripe Payment Integration
+def get_stripe_checkout():
+    """Initialize Stripe checkout with API key"""
+    api_key = os.environ.get('STRIPE_API_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe API key not configured")
+    return StripeCheckout(api_key=api_key, webhook_url=None)  # webhook_url set per request
+
+@api_router.post("/payments/create-checkout")
+async def create_checkout_session(
+    request: Request,
+    package_id: str,
+    origin_url: str,
+    user: Optional[User] = Depends(get_current_user)
+):
+    """Create Stripe checkout session for premium subscription"""
     try:
+        # Validate package
+        if package_id not in PAYMENT_PACKAGES:
+            raise HTTPException(status_code=400, detail="Invalid payment package")
+        
+        package_info = PAYMENT_PACKAGES[package_id]
+        amount = package_info["amount"]
+        currency = package_info["currency"]
+        
+        # Initialize Stripe checkout with webhook URL
+        host_url = origin_url.rstrip('/')
+        webhook_url = f"{host_url}/api/webhook/stripe"
+        stripe_checkout = StripeCheckout(api_key=os.environ.get('STRIPE_API_KEY'), webhook_url=webhook_url)
+        
+        # Create success and cancel URLs
+        success_url = f"{host_url}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
+        cancel_url = f"{host_url}/payment-cancelled"
+        
+        # Prepare metadata
+        metadata = {
+            "package_id": package_id,
+            "user_id": user.id if user else "",
+            "email": user.email if user else "",
+            "source": "betty_crystal_premium"
+        }
+        
+        # Create checkout session request
+        checkout_request = CheckoutSessionRequest(
+            amount=amount,
+            currency=currency,
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata=metadata
+        )
+        
+        # Create session with Stripe
+        session: CheckoutSessionResponse = await stripe_checkout.create_checkout_session(checkout_request)
+        
+        # Create payment transaction record BEFORE redirecting to Stripe
+        payment_transaction = PaymentTransaction(
+            session_id=session.session_id,
+            user_id=user.id if user else None,
+            email=user.email if user else None,
+            amount=amount,
+            currency=currency,
+            payment_status=PaymentStatus.INITIATED,
+            metadata=metadata
+        )
+        
+        await db.payment_transactions.insert_one(payment_transaction.dict())
+        
+        logging.info(f"Created checkout session {session.session_id} for amount ${amount}")
+        
+        return {
+            "checkout_url": session.url,
+            "session_id": session.session_id,
+            "amount": amount,
+            "currency": currency
+        }
+        
+    except Exception as e:
+        logging.error(f"Error creating checkout session: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to create checkout session: {str(e)}")
+
+@api_router.get("/payments/status/{session_id}")
+async def get_payment_status(session_id: str):
+    """Get payment status for a checkout session"""
+    try:
+        # Get payment transaction from database
+        payment_doc = await db.payment_transactions.find_one({"session_id": session_id})
+        if not payment_doc:
+            raise HTTPException(status_code=404, detail="Payment session not found")
+        
+        # Check with Stripe for latest status
+        stripe_checkout = get_stripe_checkout()
+        checkout_status: CheckoutStatusResponse = await stripe_checkout.get_checkout_status(session_id)
+        
+        # Update payment transaction if status changed
+        current_payment_status = payment_doc["payment_status"]
+        new_payment_status = PaymentStatus.PAID if checkout_status.payment_status == "paid" else PaymentStatus.PENDING
+        
+        if checkout_status.status == "expired":
+            new_payment_status = PaymentStatus.EXPIRED
+        elif checkout_status.payment_status == "unpaid":
+            new_payment_status = PaymentStatus.PENDING
+            
+        # Update database if status changed
+        if new_payment_status != current_payment_status:
+            await db.payment_transactions.update_one(
+                {"session_id": session_id},
+                {
+                    "$set": {
+                        "payment_status": new_payment_status.value,
+                        "stripe_payment_status": checkout_status.payment_status,
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+            # If payment is successful and not already processed
+            if (new_payment_status == PaymentStatus.PAID and 
+                current_payment_status != PaymentStatus.PAID and 
+                payment_doc.get("user_id")):
+                
+                await process_successful_payment(payment_doc["user_id"], session_id, payment_doc)
+        
+        return {
+            "session_id": session_id,
+            "status": checkout_status.status,
+            "payment_status": checkout_status.payment_status,
+            "amount_total": checkout_status.amount_total,
+            "currency": checkout_status.currency
+        }
+        
+    except Exception as e:
+        logging.error(f"Error checking payment status: {e}")
+        raise HTTPException(status_code=500, detail="Failed to check payment status")
+
+async def process_successful_payment(user_id: str, session_id: str, payment_doc: Dict):
+    """Process successful payment - upgrade user to premium"""
+    try:
+        # Check if already processed (prevent double processing)
+        existing_subscription = await db.user_subscriptions.find_one({
+            "user_id": user_id,
+            "stripe_subscription_id": session_id
+        })
+        
+        if existing_subscription:
+            logging.info(f"Payment {session_id} already processed for user {user_id}")
+            return
+        
         # Update user to premium
         await db.users.update_one(
-            {"_id": user.id},
+            {"_id": user_id},
             {"$set": {"is_premium": True}}
         )
         
         # Create subscription record
         subscription = UserSubscription(
-            user_id=user.id,
+            user_id=user_id,
             plan=SubscriptionPlan.PREMIUM,
-            expires_at=datetime.now(timezone.utc) + timedelta(days=30)  # 30 days
+            expires_at=datetime.now(timezone.utc) + timedelta(days=30),  # 30 days
+            stripe_subscription_id=session_id
         )
         
         await db.user_subscriptions.insert_one(subscription.dict())
         
-        return {
-            "message": "Successfully upgraded to Premium",
-            "plan": "premium",
-            "expires_at": subscription.expires_at.isoformat()
-        }
+        logging.info(f"Successfully upgraded user {user_id} to premium via payment {session_id}")
         
     except Exception as e:
-        logging.error(f"Error upgrading user to premium: {e}")
-        raise HTTPException(status_code=500, detail="Failed to upgrade to premium")
+        logging.error(f"Error processing successful payment: {e}")
+        # Don't raise exception here to avoid payment status issues
 
 @api_router.get("/auth/subscription-status", dependencies=[Depends(require_auth)])
 async def get_subscription_status(user: User = Depends(require_auth)):
