@@ -1408,18 +1408,20 @@ async def get_historical_data(symbol: str, asset_type: str):
 async def get_asset_prediction(symbol: str, asset_type: str):
     """Get AI prediction for a specific asset"""
     try:
-        # Get current price data
+        # Get current price data - symbol might already be complete
         ticker_symbol = symbol
-        if asset_type == "currency":
+        
+        # Only add suffixes if not already present
+        if asset_type == "currency" and not symbol.endswith("=X"):
             ticker_symbol = f"{symbol}=X"
-        elif asset_type == "metals":
+        elif asset_type == "metals" and not symbol.endswith("=F"):
             ticker_symbol = f"{symbol}=F"
         elif asset_type == "crypto":
-            if symbol == "BTC":
+            if symbol == "BTC" and not symbol.endswith("-USD"):
                 ticker_symbol = "BTC-USD"
-            elif symbol == "ETH":
+            elif symbol == "ETH" and not symbol.endswith("-USD"):
                 ticker_symbol = "ETH-USD"
-            else:
+            elif not symbol.endswith("-USD"):
                 ticker_symbol = f"{symbol}-USD"
         
         ticker = yf.Ticker(ticker_symbol)
