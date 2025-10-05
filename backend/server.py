@@ -627,19 +627,42 @@ async def register_user(register_request: RegisterRequest):
         import hashlib
         password_hash = hashlib.sha256(password.encode()).hexdigest()
         
-        # Create user
+        # Create user with 30-day trial and email verification
         user_id = str(uuid.uuid4())
+        verification_token = str(uuid.uuid4())
+        trial_ends_at = datetime.now(timezone.utc) + timedelta(days=30)
+        
         user_doc = {
             "_id": user_id,
             "username": username,
             "email": email,
             "password_hash": password_hash,
-            "is_premium": False,
+            "email_verified": False,
+            "verification_token": verification_token,
+            "trial_ends_at": trial_ends_at,
             "created_at": datetime.now(timezone.utc)
         }
         await db.users.insert_one(user_doc)
         
-        return {"message": "Account created successfully", "user_id": user_id}
+        # Create email verification record
+        verification_doc = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "email": email,
+            "verification_token": verification_token,
+            "expires_at": datetime.now(timezone.utc) + timedelta(hours=24),
+            "verified_at": None,
+            "created_at": datetime.now(timezone.utc)
+        }
+        await db.email_verifications.insert_one(verification_doc)
+        
+        # TODO: Send verification email (for now, return token for testing)
+        return {
+            "message": "Account created successfully! Please check your email to verify your account.",
+            "user_id": user_id,
+            "trial_ends_at": trial_ends_at.isoformat(),
+            "verification_token": verification_token  # Remove this in production
+        }
         
     except HTTPException:
         raise
