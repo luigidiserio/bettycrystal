@@ -34,7 +34,9 @@ function App() {
   const [showBettyPredictions, setShowBettyPredictions] = useState(false);
   const [showBettyHistory, setShowBettyHistory] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [showVerifyEmailModal, setShowVerifyEmailModal] = useState(false);
   const [premiumInsights, setPremiumInsights] = useState(null);
+  const [trialInsights, setTrialInsights] = useState(null);
   const [portfolioAnalysis, setPortfolioAnalysis] = useState(null);
   const [loadingBetty, setLoadingBetty] = useState(false);
   
