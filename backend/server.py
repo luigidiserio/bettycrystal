@@ -1528,7 +1528,11 @@ async def get_asset_prediction(symbol: str, asset_type: str):
             if not llm_key:
                 raise ValueError("LLM key not configured")
             
-            chat = LlmChat(llm_key)
+            chat = LlmChat(
+                api_key=llm_key,
+                session_id=f"prediction_{symbol}_{datetime.now().timestamp()}",
+                system_message=f"You are Betty Crystal, an AI trading expert analyzing {symbol}."
+            ).with_model("openai", "gpt-4o")
             
             prompt = f"""You are Betty Crystal, an AI trading expert. Analyze {symbol} ({asset_type}).
 
