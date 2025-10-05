@@ -789,8 +789,8 @@ class BettyCrystalTester:
                 self.log_test("AI Prediction Uniqueness", False, f"ETH prediction failed: {eth_response.status_code}")
                 return False
             
-            # Test CAD prediction
-            cad_response = requests.get(f"{self.api_url}/predict/CADUSD=X?asset_type=currency", timeout=45)
+            # Test CAD prediction (use CADUSD without =X since backend adds it)
+            cad_response = requests.get(f"{self.api_url}/predict/CADUSD?asset_type=currency", timeout=45)
             if cad_response.status_code != 200:
                 self.log_test("AI Prediction Uniqueness", False, f"CAD prediction failed: {cad_response.status_code}")
                 return False
