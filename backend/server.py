@@ -1348,31 +1348,33 @@ async def evaluate_betty_accuracy():
 async def get_historical_data(symbol: str, asset_type: str):
     """Get historical price data for an asset"""
     try:
-        # Map symbols for different asset types
+        # Map symbols for different asset types - handle pre-formatted symbols
         ticker_symbol = symbol
-        if asset_type == "currency":
+        
+        # Only add suffixes if not already present
+        if asset_type == "currency" and not symbol.endswith("=X"):
             ticker_symbol = f"{symbol}=X"
-        elif asset_type == "metals":
+        elif asset_type == "metals" and not symbol.endswith("=F"):
             ticker_symbol = f"{symbol}=F"
         elif asset_type == "crypto":
             # For crypto, use yfinance crypto symbols
-            if symbol == "BTC":
+            if symbol == "BTC" and not symbol.endswith("-USD"):
                 ticker_symbol = "BTC-USD"
-            elif symbol == "ETH":
+            elif symbol == "ETH" and not symbol.endswith("-USD"):
                 ticker_symbol = "ETH-USD"
-            elif symbol == "XRP":
+            elif symbol == "XRP" and not symbol.endswith("-USD"):
                 ticker_symbol = "XRP-USD"
-            elif symbol == "BNB":
+            elif symbol == "BNB" and not symbol.endswith("-USD"):
                 ticker_symbol = "BNB-USD"
-            elif symbol == "SOL":
+            elif symbol == "SOL" and not symbol.endswith("-USD"):
                 ticker_symbol = "SOL-USD"
-            elif symbol == "DOGE":
+            elif symbol == "DOGE" and not symbol.endswith("-USD"):
                 ticker_symbol = "DOGE-USD"
-            elif symbol == "ADA":
+            elif symbol == "ADA" and not symbol.endswith("-USD"):
                 ticker_symbol = "ADA-USD"
-            elif symbol == "DOT":
+            elif symbol == "DOT" and not symbol.endswith("-USD"):
                 ticker_symbol = "DOT-USD"
-            else:
+            elif not symbol.endswith("-USD"):
                 ticker_symbol = f"{symbol}-USD"
         
         # Get 7 days of historical data with 1-hour intervals
