@@ -682,7 +682,11 @@ async def verify_email(verification_token: str):
             raise HTTPException(status_code=404, detail="Invalid verification token")
         
         # Check if token expired
-        if datetime.now(timezone.utc) > verification_doc["expires_at"]:
+        expires_at = verification_doc["expires_at"]
+        if isinstance(expires_at, str):
+            expires_at = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+        
+        if datetime.now(timezone.utc) > expires_at:
             raise HTTPException(status_code=400, detail="Verification token expired")
         
         # Check if already verified
