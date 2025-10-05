@@ -751,9 +751,9 @@ class BettyCrystalTester:
     def test_registration_duplicate_user(self):
         """Test duplicate registration should return error"""
         try:
-            # Try to register the same user again
+            # Try to register a user with known existing credentials
             data = {
-                "username": "testuser",
+                "username": "testuser",  # This should exist from previous tests
                 "email": "test@example.com",
                 "password": "testpass"
             }
