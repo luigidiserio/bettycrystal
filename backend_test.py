@@ -716,6 +716,131 @@ class BettyCrystalTester:
             self.log_test("Payment Anonymous User Support", False, f"Error: {str(e)}")
             return False
 
+    def test_registration_endpoint_json(self):
+        """Test registration endpoint with JSON body as specified in review request"""
+        try:
+            # Test with exact JSON body from review request
+            data = {
+                "username": "testuser",
+                "email": "test@example.com",
+                "password": "testpass"
+            }
+            
+            response = requests.post(f"{self.api_url}/auth/register", json=data, timeout=10)
+            success = response.status_code == 200
+            
+            if success:
+                response_data = response.json()
+                if "message" in response_data and "user_id" in response_data:
+                    details = f"User registered successfully: {response_data['message']}"
+                    self.test_user_id = response_data["user_id"]
+                else:
+                    success = False
+                    details = "Registration response missing required fields"
+            else:
+                details = f"Registration failed: {response.status_code}"
+                
+            self.log_test("Registration Endpoint (JSON Body)", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Registration Endpoint (JSON Body)", False, f"Error: {str(e)}")
+            return False
+
+    def test_registration_duplicate_user(self):
+        """Test duplicate registration should return error"""
+        try:
+            # Try to register the same user again
+            data = {
+                "username": "testuser",
+                "email": "test@example.com",
+                "password": "testpass"
+            }
+            
+            response = requests.post(f"{self.api_url}/auth/register", json=data, timeout=10)
+            success = response.status_code == 400  # Should return error for duplicate
+            
+            if success:
+                details = "Correctly rejected duplicate registration (400 Bad Request)"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 400 for duplicate)"
+                
+            self.log_test("Registration Duplicate User", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Registration Duplicate User", False, f"Error: {str(e)}")
+            return False
+
+    def test_ai_prediction_uniqueness(self):
+        """Test that AI predictions are unique and asset-specific"""
+        try:
+            print("Testing AI prediction uniqueness (this may take 30-45 seconds)...")
+            
+            # Test BTC prediction
+            btc_response = requests.get(f"{self.api_url}/predict/BTC?asset_type=crypto", timeout=45)
+            if btc_response.status_code != 200:
+                self.log_test("AI Prediction Uniqueness", False, f"BTC prediction failed: {btc_response.status_code}")
+                return False
+            
+            # Test ETH prediction
+            eth_response = requests.get(f"{self.api_url}/predict/ETH?asset_type=crypto", timeout=45)
+            if eth_response.status_code != 200:
+                self.log_test("AI Prediction Uniqueness", False, f"ETH prediction failed: {eth_response.status_code}")
+                return False
+            
+            # Test CAD prediction
+            cad_response = requests.get(f"{self.api_url}/predict/CADUSD=X?asset_type=currency", timeout=45)
+            if cad_response.status_code != 200:
+                self.log_test("AI Prediction Uniqueness", False, f"CAD prediction failed: {cad_response.status_code}")
+                return False
+            
+            # Parse responses
+            btc_data = btc_response.json()
+            eth_data = eth_response.json()
+            cad_data = cad_response.json()
+            
+            # Check that predictions are asset-specific
+            btc_analysis = btc_data.get("prediction", {}).get("analysis", "")
+            eth_analysis = eth_data.get("prediction", {}).get("analysis", "")
+            cad_analysis = cad_data.get("prediction", {}).get("analysis", "")
+            
+            # Verify symbols are correct
+            symbol_check = (btc_data.get("symbol") == "BTC" and 
+                          eth_data.get("symbol") == "ETH" and 
+                          cad_data.get("symbol") == "CADUSD=X")
+            
+            # Verify analyses are different (not identical content)
+            uniqueness_check = (btc_analysis != eth_analysis and 
+                              eth_analysis != cad_analysis and 
+                              btc_analysis != cad_analysis)
+            
+            # Verify analyses contain asset-specific content
+            asset_specific_check = ("BTC" in btc_analysis or "Bitcoin" in btc_analysis) and \
+                                 ("ETH" in eth_analysis or "Ethereum" in eth_analysis) and \
+                                 ("CAD" in cad_analysis or "Canadian" in cad_analysis)
+            
+            success = symbol_check and uniqueness_check and asset_specific_check
+            
+            if success:
+                details = "All predictions are unique and asset-specific"
+            else:
+                issues = []
+                if not symbol_check:
+                    issues.append("incorrect symbols")
+                if not uniqueness_check:
+                    issues.append("identical predictions")
+                if not asset_specific_check:
+                    issues.append("not asset-specific")
+                details = f"Issues found: {', '.join(issues)}"
+                
+            self.log_test("AI Prediction Uniqueness", success, details, None)
+            return success
+            
+        except Exception as e:
+            self.log_test("AI Prediction Uniqueness", False, f"Error: {str(e)}")
+            return False
+
     def run_comprehensive_test(self):
         """Run all Betty Crystal backend tests"""
         print("🔮 Starting Betty Crystal Backend Tests")
