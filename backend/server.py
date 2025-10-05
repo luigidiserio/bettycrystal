@@ -1646,8 +1646,8 @@ async def get_betty_premium_insights(user: User = Depends(require_premium_auth))
 Be detailed, professional, and provide actionable insights that justify premium access.
 Current date: {datetime.now(timezone.utc).strftime('%Y-%m-%d')}"""
 
-            response = await chat.send_message(UserMessage(content=prompt))
-            premium_content = response.content
+            response = await chat.send_message(UserMessage(text=prompt))
+            premium_content = response
         else:
             premium_content = """🔮 Betty's Premium Market Insights
 
