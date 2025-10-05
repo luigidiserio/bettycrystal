@@ -133,6 +133,44 @@ class BettyWeeklyReport(BaseModel):
     betty_confidence: float = 0.7  # Betty's confidence in her abilities
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+# Payment Models
+class PaymentStatus(str, Enum):
+    PENDING = "pending"
+    INITIATED = "initiated" 
+    PAID = "paid"
+    FAILED = "failed"
+    EXPIRED = "expired"
+    CANCELLED = "cancelled"
+
+class PaymentTransaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    session_id: str
+    user_id: Optional[str] = None
+    email: Optional[str] = None
+    amount: float
+    currency: str = "usd"
+    payment_status: PaymentStatus = PaymentStatus.PENDING
+    stripe_payment_status: Optional[str] = None
+    metadata: Optional[Dict[str, str]] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    
+    class Config:
+        use_enum_values = True
+
+class PaymentPackage(str, Enum):
+    PREMIUM_MONTHLY = "premium_monthly"
+
+# Fixed payment packages - Security: Never accept amounts from frontend
+PAYMENT_PACKAGES = {
+    PaymentPackage.PREMIUM_MONTHLY: {
+        "amount": 9.99,
+        "currency": "usd", 
+        "description": "Betty Crystal Premium - Monthly Subscription",
+        "features": ["Premium predictions", "Advanced analysis", "Portfolio insights"]
+    }
+}
+
 # Cache for financial data
 data_cache = {
     "currencies": {"data": [], "last_updated": None},
