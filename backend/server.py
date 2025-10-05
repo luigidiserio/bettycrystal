@@ -1515,8 +1515,8 @@ Note: Premium analysis includes real-time alerts and personalized recommendation
         logging.error(f"Error generating premium insights: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate premium insights")
 
-@api_router.get("/betty/portfolio-analysis", dependencies=[Depends(require_premium_auth)])
-async def get_betty_portfolio_analysis(user: User = Depends(require_premium_auth)):
+@api_router.get("/betty/portfolio-analysis", dependencies=[Depends(require_verified_user)])
+async def get_betty_portfolio_analysis(user: User = Depends(require_verified_user)):
     """Get Betty's advanced portfolio analysis (Premium only)"""
     try:
         return {
