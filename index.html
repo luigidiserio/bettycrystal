@@ -967,22 +967,78 @@
             }
             
             try {
-                const response = await fetch(`${API}/auth/upgrade-to-premium`, {
+                const originUrl = window.location.origin;
+                
+                const response = await fetch(`${API}/payments/create-checkout`, {
                     method: 'POST',
-                    credentials: 'include'
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        package_id: 'premium_monthly',
+                        origin_url: originUrl
+                    })
                 });
                 
                 if (response.ok) {
-                    currentUser.isPremium = true;
-                    hideModal('premium-modal');
-                    alert('Successfully upgraded to Premium! 🎉');
-                    updateUI();
+                    const data = await response.json();
+                    window.location.href = data.checkout_url;
                 } else {
-                    alert('Upgrade failed. Please try again.');
+                    alert('Failed to create payment session. Please try again.');
                 }
             } catch (error) {
-                console.error('Upgrade error:', error);
-                alert('Upgrade failed. Please try again.');
+                console.error('Payment error:', error);
+                alert('Failed to create payment session. Please try again.');
+            }
+        }
+
+        // Payment status functions
+        async function checkPaymentStatus(sessionId) {
+            try {
+                const response = await fetch(`${API}/payments/status/${sessionId}`);
+                return response.ok ? await response.json() : null;
+            } catch (error) {
+                console.error('Error checking payment status:', error);
+                return null;
+            }
+        }
+
+        async function pollPaymentStatus(sessionId, attempts = 0) {
+            const maxAttempts = 10;
+            const pollInterval = 2000;
+
+            if (attempts >= maxAttempts) {
+                alert('Payment status check timed out. Please refresh the page or contact support.');
+                return;
+            }
+
+            try {
+                const paymentData = await checkPaymentStatus(sessionId);
+                
+                if (paymentData?.payment_status === 'paid') {
+                    alert('Payment successful! Welcome to Betty Crystal Premium! 🎉');
+                    // Refresh page to update user status
+                    window.location.reload();
+                    return;
+                } else if (paymentData?.status === 'expired') {
+                    alert('Payment session expired. Please try again.');
+                    return;
+                }
+
+                setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
+            } catch (error) {
+                console.error('Error during payment polling:', error);
+                setTimeout(() => pollPaymentStatus(sessionId, attempts + 1), pollInterval);
+            }
+        }
+
+        function checkReturnFromPayment() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+            
+            if (sessionId) {
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                pollPaymentStatus(sessionId);
             }
         }
         
