@@ -1126,6 +1126,9 @@
             showLoading();
             
             try {
+                // Check for payment return first
+                checkReturnFromPayment();
+                
                 await fetchMarketData();
                 initializeTabs();
                 initializeEventListeners();
