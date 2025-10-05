@@ -848,7 +848,7 @@ function App() {
                   {/* Premium Features Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Button
-                      onClick={fetchPremiumInsights}
+                      onClick={fetchTrialInsights}
                       disabled={loadingBetty}
                       className="h-20 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     >
