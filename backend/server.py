@@ -956,6 +956,48 @@ async def process_successful_payment(user_id: str, session_id: str, payment_doc:
         logging.error(f"Error processing successful payment: {e}")
         # Don't raise exception here to avoid payment status issues
 
+@api_router.post("/webhook/stripe")
+async def stripe_webhook(request: Request):
+    """Handle Stripe webhook events"""
+    try:
+        # Get webhook body and signature
+        webhook_body = await request.body()
+        signature = request.headers.get("Stripe-Signature")
+        
+        if not signature:
+            raise HTTPException(status_code=400, detail="Missing Stripe signature")
+        
+        # Initialize Stripe checkout and handle webhook
+        stripe_checkout = get_stripe_checkout()
+        webhook_response = await stripe_checkout.handle_webhook(webhook_body, signature)
+        
+        # Process webhook event
+        if webhook_response.event_type == "checkout.session.completed":
+            session_id = webhook_response.session_id
+            
+            # Update payment status in database
+            await db.payment_transactions.update_one(
+                {"session_id": session_id},
+                {
+                    "$set": {
+                        "payment_status": PaymentStatus.PAID.value,
+                        "stripe_payment_status": webhook_response.payment_status,
+                        "updated_at": datetime.now(timezone.utc)
+                    }
+                }
+            )
+            
+            # Process premium upgrade
+            payment_doc = await db.payment_transactions.find_one({"session_id": session_id})
+            if payment_doc and payment_doc.get("user_id"):
+                await process_successful_payment(payment_doc["user_id"], session_id, payment_doc)
+        
+        return {"status": "success", "event_id": webhook_response.event_id}
+        
+    except Exception as e:
+        logging.error(f"Webhook error: {e}")
+        raise HTTPException(status_code=400, detail="Webhook processing failed")
+
 @api_router.get("/auth/subscription-status", dependencies=[Depends(require_auth)])
 async def get_subscription_status(user: User = Depends(require_auth)):
     """Get user's subscription status"""
