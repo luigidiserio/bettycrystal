@@ -68,7 +68,9 @@ function App() {
       setUser({
         ...userData,
         name: userData.username === 'demo' ? 'Demo User' : 'Betty Lover',
-        isPremium: userData.is_premium
+        emailVerified: userData.email_verified,
+        trialEndsAt: userData.trial_ends_at,
+        trialActive: true  // Will check actual status separately
       });
       setShowLoginForm(false);
       setLoginForm({ username: '', password: '' });
