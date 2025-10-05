@@ -170,6 +170,18 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ TESTED: Authentication system working correctly. /api/auth/me returns 401 without token as expected. User registration/login flow functional. Protected endpoints properly secured. Session management working."
+  
+  - task: "Emergent Stripe Payment Integration"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented Emergent Stripe payment system with /payments/create-checkout, /payments/status/{session_id}, and /webhook/stripe endpoints. Added PaymentTransaction model and PAYMENT_PACKAGES constant. Replaced mock premium upgrade with real payment processing. Needs testing."
 
 frontend:
   - task: "Asset analysis charts display"
