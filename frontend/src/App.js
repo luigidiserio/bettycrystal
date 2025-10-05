@@ -1622,11 +1622,11 @@ function App() {
               
               <div className="space-y-3">
                 <Button 
-                  onClick={upgradeToPremium}
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3"
+                  onClick={() => setShowVerifyEmailModal(true)}
+                  className="w-full bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold py-3"
                 >
-                  <Crown className="w-4 h-4 mr-2" />
-                  Upgrade to Premium Now
+                  <Mail className="w-4 h-4 mr-2" />
+                  Verify Email for Full Access
                 </Button>
                 
                 <Button 
