@@ -681,6 +681,9 @@ class LoginRequest(BaseModel):
 async def login_user(login_request: LoginRequest, response: Response):
     """Login user with username/password"""
     try:
+        username = login_request.username
+        password = login_request.password
+        
         # Hash password for comparison
         import hashlib
         password_hash = hashlib.sha256(password.encode()).hexdigest()
