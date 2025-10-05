@@ -392,19 +392,31 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        console.log('Starting data fetch...');
         setLoading(true);
+        console.log('Making API calls to:', API);
+        
         const [currencyRes, cryptoRes, metalsRes] = await Promise.all([
           axios.get(`${API}/currencies`),
           axios.get(`${API}/crypto`), 
           axios.get(`${API}/metals`)
         ]);
         
+        console.log('API responses received:', {
+          currencies: currencyRes.data.length,
+          crypto: cryptoRes.data.length, 
+          metals: metalsRes.data.length
+        });
+        
         setCurrencies(currencyRes.data);
         setCrypto(cryptoRes.data);
         setMetals(metalsRes.data);
       } catch (error) {
         console.error('Error fetching data:', error);
+        // Set loading to false even on error to prevent infinite loading
+        setLoading(false);
       } finally {
+        console.log('Setting loading to false');
         setLoading(false);
       }
     };
