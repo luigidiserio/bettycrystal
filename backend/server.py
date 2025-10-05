@@ -670,6 +670,46 @@ async def register_user(register_request: RegisterRequest):
         logging.error(f"Error registering user: {e}")
         raise HTTPException(status_code=500, detail="Failed to create account")
 
+@api_router.post("/auth/verify-email")
+async def verify_email(verification_token: str):
+    """Verify user email address"""
+    try:
+        # Find verification record
+        verification_doc = await db.email_verifications.find_one({
+            "verification_token": verification_token
+        })
+        
+        if not verification_doc:
+            raise HTTPException(status_code=404, detail="Invalid verification token")
+        
+        # Check if token expired
+        if datetime.now(timezone.utc) > verification_doc["expires_at"]:
+            raise HTTPException(status_code=400, detail="Verification token expired")
+        
+        # Check if already verified
+        if verification_doc.get("verified_at"):
+            return {"message": "Email already verified"}
+        
+        # Mark email as verified
+        await db.email_verifications.update_one(
+            {"verification_token": verification_token},
+            {"$set": {"verified_at": datetime.now(timezone.utc)}}
+        )
+        
+        # Update user record
+        await db.users.update_one(
+            {"_id": verification_doc["user_id"]},
+            {"$set": {"email_verified": True}}
+        )
+        
+        return {"message": "Email successfully verified! You can now access all features."}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error verifying email: {e}")
+        raise HTTPException(status_code=500, detail="Failed to verify email")
+
 class LoginRequest(BaseModel):
     username: str
     password: str
