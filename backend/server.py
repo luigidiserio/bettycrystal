@@ -1451,8 +1451,8 @@ Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"""
         logging.error(f"Error generating prediction for {symbol}: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate prediction")
 
-@api_router.get("/betty/premium-insights", dependencies=[Depends(require_premium_auth)])
-async def get_betty_premium_insights(user: User = Depends(require_premium_auth)):
+@api_router.get("/betty/premium-insights", dependencies=[Depends(require_verified_user)])
+async def get_betty_premium_insights(user: User = Depends(require_verified_user)):
     """Get Betty's premium insights and advanced analysis (Premium only)"""
     try:
         # Generate premium content using LLM
