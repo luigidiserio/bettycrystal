@@ -907,6 +907,20 @@ class BettyCrystalTester:
         
         # Identify critical failures
         critical_failures = []
+        
+        # CRITICAL ISSUES FROM REVIEW REQUEST
+        if not registration_success:
+            critical_failures.append("🚨 CRITICAL: Registration endpoint with JSON body failed (user-reported issue)")
+        if not registration_duplicate_success:
+            critical_failures.append("🚨 CRITICAL: Duplicate registration not properly handled")
+        if not payment_create_valid_success:
+            critical_failures.append("🚨 CRITICAL: Payment checkout creation with JSON body failed (user-reported issue)")
+        if not payment_create_invalid_success:
+            critical_failures.append("🚨 CRITICAL: Invalid package_id not returning 400 error (user-reported issue)")
+        if not ai_uniqueness_success:
+            critical_failures.append("🚨 CRITICAL: AI predictions not unique/asset-specific (user-reported issue)")
+        
+        # Other system failures
         if not currencies_success or not crypto_success or not metals_success:
             critical_failures.append("Market data endpoints failed (Betty needs these for predictions)")
         if not historical_success:
@@ -926,9 +940,7 @@ class BettyCrystalTester:
         if session_success and not betty_predictions_success:
             critical_failures.append("Betty's AI prediction generation failed")
         
-        # Payment integration critical failures
-        if not payment_create_valid_success:
-            critical_failures.append("Payment checkout creation failed (core payment functionality)")
+        # Payment integration failures
         if not payment_status_valid_success:
             critical_failures.append("Payment status check failed (payment tracking broken)")
         if not payment_database_success:
