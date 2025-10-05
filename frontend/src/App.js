@@ -256,18 +256,27 @@ function App() {
 
   const upgradeToPremium = async () => {
     try {
-      const response = await axios.post(`${API}/auth/upgrade-to-premium`, {}, {
+      if (!user) {
+        handleShowLogin();
+        return;
+      }
+
+      // Get current origin URL
+      const originUrl = window.location.origin;
+      
+      const response = await axios.post(`${API}/payments/create-checkout`, {
+        package_id: 'premium_monthly',
+        origin_url: originUrl
+      }, {
         withCredentials: true
       });
       
-      // Update user state
-      setUser(prev => ({ ...prev, isPremium: true }));
-      setShowPremiumModal(false);
+      // Redirect to Stripe Checkout
+      window.location.href = response.data.checkout_url;
       
-      alert('Successfully upgraded to Premium! 🎉');
     } catch (error) {
-      console.error('Error upgrading to premium:', error);
-      alert('Failed to upgrade to premium. Please try again.');
+      console.error('Error creating checkout session:', error);
+      alert('Failed to create payment session. Please try again.');
     }
   };
 
