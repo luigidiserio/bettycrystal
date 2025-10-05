@@ -857,33 +857,24 @@ async def require_verified_user(user: User = Depends(require_auth)):
         raise HTTPException(status_code=403, detail=message)
     return user
 
-@api_router.get("/auth/subscription-status", dependencies=[Depends(require_auth)])
-async def get_subscription_status(user: User = Depends(require_auth)):
-    """Get user's subscription status"""
+@api_router.get("/auth/trial-status", dependencies=[Depends(require_auth)])
+async def get_trial_status(user: User = Depends(require_auth)):
+    """Get user's trial status"""
     try:
-        subscription = await db.user_subscriptions.find_one(
-            {"user_id": user.id, "is_active": True},
-            sort=[("created_at", -1)]
-        )
+        is_valid, message = await check_trial_status(user)
+        days_remaining = (user.trial_ends_at - datetime.now(timezone.utc)).days
         
-        if subscription:
-            return {
-                "plan": subscription["plan"],
-                "is_active": subscription["is_active"],
-                "expires_at": subscription.get("expires_at"),
-                "is_premium": user.is_premium
-            }
-        else:
-            return {
-                "plan": "free",
-                "is_active": True,
-                "expires_at": None,
-                "is_premium": user.is_premium
-            }
+        return {
+            "email_verified": user.email_verified,
+            "trial_active": is_valid,
+            "trial_ends_at": user.trial_ends_at.isoformat(),
+            "days_remaining": max(0, days_remaining),
+            "message": message
+        }
             
     except Exception as e:
-        logging.error(f"Error getting subscription status: {e}")
-        raise HTTPException(status_code=500, detail="Failed to get subscription status")
+        logging.error(f"Error getting trial status: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get trial status")
 
 # Market Data Endpoints (same as before but with authentication for some)
 @api_router.get("/")
