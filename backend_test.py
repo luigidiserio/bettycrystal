@@ -851,6 +851,21 @@ class BettyCrystalTester:
             print("❌ API is not accessible. Stopping tests.")
             return False
         
+        # CRITICAL TESTS FROM REVIEW REQUEST
+        print("\n🚨 Testing Critical Issues from Review Request...")
+        
+        # 1. Registration Endpoint Testing (JSON body)
+        registration_success = self.test_registration_endpoint_json()
+        registration_duplicate_success = self.test_registration_duplicate_user()
+        
+        # 2. Payment Integration Testing (JSON body)
+        print("\n💳 Testing Payment Integration with JSON Bodies...")
+        payment_create_valid_success, payment_data = self.test_payment_create_checkout_valid()
+        payment_create_invalid_success = self.test_payment_create_checkout_invalid_package()
+        
+        # 3. AI Prediction Uniqueness Testing
+        ai_uniqueness_success = self.test_ai_prediction_uniqueness()
+        
         # Test all market data endpoints (Betty needs these for predictions)
         currencies_success, currencies_data = self.test_currencies_endpoint()
         crypto_success, crypto_data = self.test_crypto_endpoint()
@@ -876,10 +891,8 @@ class BettyCrystalTester:
             auth_me_success = self.test_auth_me_endpoint(session_token)
             betty_predictions_success, predictions_data = self.test_betty_predictions_with_auth(session_token)
         
-        # Test Emergent Stripe Payment Integration
-        print("\n💳 Testing Emergent Stripe Payment Integration...")
-        payment_create_valid_success, payment_data = self.test_payment_create_checkout_valid()
-        payment_create_invalid_success = self.test_payment_create_checkout_invalid_package()
+        # Test remaining payment endpoints
+        print("\n💳 Testing Additional Payment Integration...")
         payment_create_missing_success = self.test_payment_create_checkout_missing_params()
         payment_status_valid_success, status_data = self.test_payment_status_valid_session()
         payment_status_invalid_success = self.test_payment_status_invalid_session()
