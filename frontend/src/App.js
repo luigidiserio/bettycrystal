@@ -214,36 +214,33 @@ function App() {
     }
   };
 
-  const fetchPremiumInsights = async () => {
-    if (!user?.isPremium) {
-      setShowPremiumModal(true);
+  const fetchTrialInsights = async () => {
+    if (!user?.trialActive || !user?.emailVerified) {
+      setShowVerifyEmailModal(true);
       return;
     }
-    
+
     try {
-      setLoadingBetty(true);
       const response = await axios.get(`${API}/betty/premium-insights`, {
         withCredentials: true
       });
-      setPremiumInsights(response.data);
+      setTrialInsights(response.data);
     } catch (error) {
-      console.error('Error fetching premium insights:', error);
+      console.error('Error fetching trial insights:', error);
       if (error.response?.status === 403) {
-        setShowPremiumModal(true);
+        alert('Please verify your email to access Betty\'s insights!');
+        setShowVerifyEmailModal(true);
       }
-    } finally {
-      setLoadingBetty(false);
     }
   };
 
   const fetchPortfolioAnalysis = async () => {
-    if (!user?.isPremium) {
-      setShowPremiumModal(true);
+    if (!user?.trialActive || !user?.emailVerified) {
+      setShowVerifyEmailModal(true);
       return;
     }
-    
+
     try {
-      setLoadingBetty(true);
       const response = await axios.get(`${API}/betty/portfolio-analysis`, {
         withCredentials: true
       });
@@ -251,10 +248,9 @@ function App() {
     } catch (error) {
       console.error('Error fetching portfolio analysis:', error);
       if (error.response?.status === 403) {
-        setShowPremiumModal(true);
+        alert('Please verify your email to access portfolio analysis!');
+        setShowVerifyEmailModal(true);
       }
-    } finally {
-      setLoadingBetty(false);
     }
   };
 
