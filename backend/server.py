@@ -1062,8 +1062,70 @@ async def initialize_betty_history():
             }
         ]
         
-        # Insert historical predictions
-        all_predictions = week1_predictions + week2_predictions
+        # Week 3 (This Week) - New Sunday Picks! 🔮
+        week3_monday = current_monday
+        week3_predictions = [
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week3_monday,
+                "asset_symbol": "BTC",
+                "asset_name": "Bitcoin",
+                "asset_type": "crypto",
+                "current_price": 125334.0,
+                "direction": "up",
+                "predicted_change_percent": 4.2,
+                "predicted_target_price": 130600.0,
+                "confidence_level": 0.82,
+                "reasoning": "Bitcoin's Sunday surge momentum + institutional buying pressure suggests strong weekly breakout above $130K resistance.",
+                "created_at": week3_monday,
+                # No results yet - predictions for this week
+                "final_price": None,
+                "actual_change_percent": None,
+                "was_correct": None,
+                "evaluated_at": None
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week3_monday,
+                "asset_symbol": "EURJPY=X",
+                "asset_name": "EUR/JPY",
+                "asset_type": "currency",
+                "current_price": 162.45,
+                "direction": "down",
+                "predicted_change_percent": 2.1,
+                "predicted_target_price": 159.04,
+                "confidence_level": 0.76,
+                "reasoning": "BOJ intervention signals + European economic uncertainty create perfect storm for EUR/JPY weekly decline.",
+                "created_at": week3_monday,
+                # No results yet
+                "final_price": None,
+                "actual_change_percent": None,
+                "was_correct": None,
+                "evaluated_at": None
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "week_start": week3_monday,
+                "asset_symbol": "PL=F",
+                "asset_name": "Platinum",
+                "asset_type": "metal",
+                "current_price": 967.8,
+                "direction": "up",
+                "predicted_change_percent": 3.8,
+                "predicted_target_price": 1004.6,
+                "confidence_level": 0.71,
+                "reasoning": "Industrial demand surge + supply constraints in South Africa = platinum breakthrough week above $1000.",
+                "created_at": week3_monday,
+                # No results yet
+                "final_price": None,
+                "actual_change_percent": None,
+                "was_correct": None,
+                "evaluated_at": None
+            }
+        ]
+        
+        # Insert historical predictions + new weekly picks
+        all_predictions = week1_predictions + week2_predictions + week3_predictions
         
         # Convert datetime objects to strings for MongoDB
         for pred in all_predictions:
@@ -1076,7 +1138,7 @@ async def initialize_betty_history():
         
         await db.betty_predictions.insert_many(all_predictions)
         
-        logging.info("Betty's historical data initialized: Week 1 (3/3), Week 2 (2/3)")
+        logging.info("Betty's history initialized: Week 1 (3/3), Week 2 (2/3), Week 3 (NEW Sunday picks!)")
         
     except Exception as e:
         logging.error(f"Error initializing Betty's history: {e}")
