@@ -760,7 +760,8 @@ async def login_user(login_request: LoginRequest, response: Response):
                 "id": user_doc["_id"],
                 "username": user_doc["username"],
                 "email": user_doc["email"],
-                "is_premium": user_doc.get("is_premium", False)
+                "email_verified": user_doc.get("email_verified", False),
+                "trial_ends_at": user_doc.get("trial_ends_at", datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
             }
         }
         
