@@ -673,8 +673,12 @@ async def register_user(register_request: RegisterRequest):
         logging.error(f"Error registering user: {e}")
         raise HTTPException(status_code=500, detail="Failed to create account")
 
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
 @api_router.post("/auth/login")
-async def login_user(username: str, password: str, response: Response):
+async def login_user(login_request: LoginRequest, response: Response):
     """Login user with username/password"""
     try:
         # Hash password for comparison
