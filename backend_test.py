@@ -477,6 +477,245 @@ class BettyCrystalTester:
             self.log_test("Betty History Endpoint", False, f"Error: {str(e)}")
             return False, {}
 
+    def test_payment_create_checkout_valid(self):
+        """Test payment checkout creation with valid package_id"""
+        try:
+            payload = {
+                "package_id": "premium_monthly",
+                "origin_url": self.base_url
+            }
+            
+            response = requests.post(f"{self.api_url}/payments/create-checkout", 
+                                   json=payload, timeout=15)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                required_fields = ["checkout_url", "session_id", "amount", "currency"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    # Verify expected values
+                    if (data["amount"] == 9.99 and 
+                        data["currency"] == "usd" and 
+                        "stripe.com" in data["checkout_url"] and
+                        len(data["session_id"]) > 10):
+                        details = f"Checkout created: ${data['amount']} {data['currency']}, session: {data['session_id'][:20]}..."
+                        self.test_session_id = data["session_id"]  # Store for status test
+                    else:
+                        success = False
+                        details = "Invalid checkout data values"
+                else:
+                    success = False
+                    details = "Response missing required fields"
+            else:
+                details = f"Status code: {response.status_code}"
+                
+            self.log_test("Payment Create Checkout (Valid)", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Payment Create Checkout (Valid)", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_payment_create_checkout_invalid_package(self):
+        """Test payment checkout creation with invalid package_id"""
+        try:
+            payload = {
+                "package_id": "invalid_package",
+                "origin_url": self.base_url
+            }
+            
+            response = requests.post(f"{self.api_url}/payments/create-checkout", 
+                                   json=payload, timeout=15)
+            success = response.status_code == 400  # Should be bad request
+            
+            if success:
+                details = "Correctly rejected invalid package_id (400 Bad Request)"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 400)"
+                
+            self.log_test("Payment Create Checkout (Invalid Package)", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Payment Create Checkout (Invalid Package)", False, f"Error: {str(e)}")
+            return False
+
+    def test_payment_create_checkout_missing_params(self):
+        """Test payment checkout creation with missing parameters"""
+        try:
+            payload = {
+                "package_id": "premium_monthly"
+                # Missing origin_url
+            }
+            
+            response = requests.post(f"{self.api_url}/payments/create-checkout", 
+                                   json=payload, timeout=15)
+            success = response.status_code in [400, 422]  # Should be bad request or validation error
+            
+            if success:
+                details = f"Correctly rejected missing origin_url ({response.status_code})"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 400 or 422)"
+                
+            self.log_test("Payment Create Checkout (Missing Params)", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Payment Create Checkout (Missing Params)", False, f"Error: {str(e)}")
+            return False
+
+    def test_payment_status_valid_session(self):
+        """Test payment status check with valid session_id"""
+        try:
+            # Use session_id from previous test if available
+            session_id = getattr(self, 'test_session_id', 'cs_test_invalid_session')
+            
+            response = requests.get(f"{self.api_url}/payments/status/{session_id}", timeout=15)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                required_fields = ["session_id", "status", "payment_status"]
+                has_required_fields = all(field in data for field in required_fields)
+                
+                if has_required_fields:
+                    details = f"Payment status: {data['status']}, payment: {data['payment_status']}"
+                else:
+                    success = False
+                    details = "Response missing required fields"
+            else:
+                details = f"Status code: {response.status_code}"
+                
+            self.log_test("Payment Status Check (Valid Session)", success, details, response.text if not success else None)
+            return success, data if success else {}
+            
+        except Exception as e:
+            self.log_test("Payment Status Check (Valid Session)", False, f"Error: {str(e)}")
+            return False, {}
+
+    def test_payment_status_invalid_session(self):
+        """Test payment status check with invalid session_id"""
+        try:
+            invalid_session_id = "cs_test_invalid_session_12345"
+            
+            response = requests.get(f"{self.api_url}/payments/status/{invalid_session_id}", timeout=15)
+            success = response.status_code == 404  # Should be not found
+            
+            if success:
+                details = "Correctly returned 404 for invalid session_id"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 404)"
+                
+            self.log_test("Payment Status Check (Invalid Session)", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Payment Status Check (Invalid Session)", False, f"Error: {str(e)}")
+            return False
+
+    def test_payment_webhook_endpoint(self):
+        """Test Stripe webhook endpoint (basic connectivity)"""
+        try:
+            # Test webhook endpoint without signature (should fail gracefully)
+            payload = {
+                "id": "evt_test_webhook",
+                "object": "event",
+                "type": "checkout.session.completed"
+            }
+            
+            response = requests.post(f"{self.api_url}/webhook/stripe", 
+                                   json=payload, timeout=15)
+            # Should return 400 due to missing signature, not 500 or connection error
+            success = response.status_code == 400
+            
+            if success:
+                details = "Webhook endpoint accessible, correctly requires Stripe signature (400)"
+            else:
+                details = f"Unexpected status code: {response.status_code} (expected 400 for missing signature)"
+                
+            self.log_test("Payment Webhook Endpoint", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Payment Webhook Endpoint", False, f"Error: {str(e)}")
+            return False
+
+    def test_payment_database_verification(self):
+        """Test that payment transactions are being stored in database"""
+        try:
+            # This test checks if we can create a checkout and verify it creates a database record
+            # We'll do this by creating a checkout and then checking the status
+            payload = {
+                "package_id": "premium_monthly",
+                "origin_url": self.base_url
+            }
+            
+            # Create checkout
+            checkout_response = requests.post(f"{self.api_url}/payments/create-checkout", 
+                                            json=payload, timeout=15)
+            
+            if checkout_response.status_code != 200:
+                self.log_test("Payment Database Verification", False, 
+                            f"Failed to create checkout for database test: {checkout_response.status_code}")
+                return False
+            
+            checkout_data = checkout_response.json()
+            session_id = checkout_data["session_id"]
+            
+            # Check status (this verifies database record exists)
+            status_response = requests.get(f"{self.api_url}/payments/status/{session_id}", timeout=15)
+            success = status_response.status_code == 200
+            
+            if success:
+                status_data = status_response.json()
+                if status_data.get("session_id") == session_id:
+                    details = f"Database record verified for session: {session_id[:20]}..."
+                else:
+                    success = False
+                    details = "Database record session_id mismatch"
+            else:
+                details = f"Failed to retrieve payment record: {status_response.status_code}"
+                
+            self.log_test("Payment Database Verification", success, details, 
+                         status_response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Payment Database Verification", False, f"Error: {str(e)}")
+            return False
+
+    def test_payment_anonymous_user_support(self):
+        """Test that payment system works for anonymous users (no authentication required)"""
+        try:
+            # Test without any authentication headers
+            payload = {
+                "package_id": "premium_monthly",
+                "origin_url": self.base_url
+            }
+            
+            response = requests.post(f"{self.api_url}/payments/create-checkout", 
+                                   json=payload, timeout=15)
+            success = response.status_code == 200
+            
+            if success:
+                data = response.json()
+                if "checkout_url" in data and "session_id" in data:
+                    details = "Anonymous user can create checkout session successfully"
+                else:
+                    success = False
+                    details = "Checkout created but missing required fields"
+            else:
+                details = f"Anonymous checkout failed: {response.status_code}"
+                
+            self.log_test("Payment Anonymous User Support", success, details, response.text if not success else None)
+            return success
+            
+        except Exception as e:
+            self.log_test("Payment Anonymous User Support", False, f"Error: {str(e)}")
+            return False
+
     def run_comprehensive_test(self):
         """Run all Betty Crystal backend tests"""
         print("🔮 Starting Betty Crystal Backend Tests")
