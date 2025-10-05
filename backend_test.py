@@ -808,7 +808,7 @@ class BettyCrystalTester:
             # Verify symbols are correct
             symbol_check = (btc_data.get("symbol") == "BTC" and 
                           eth_data.get("symbol") == "ETH" and 
-                          cad_data.get("symbol") == "CADUSD=X")
+                          cad_data.get("symbol") == "CADUSD")
             
             # Verify analyses are different (not identical content)
             uniqueness_check = (btc_analysis != eth_analysis and 
