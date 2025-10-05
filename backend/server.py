@@ -795,11 +795,14 @@ def get_stripe_checkout():
         raise HTTPException(status_code=500, detail="Stripe API key not configured")
     return StripeCheckout(api_key=api_key, webhook_url=None)  # webhook_url set per request
 
+class CreateCheckoutRequest(BaseModel):
+    package_id: str
+    origin_url: str
+
 @api_router.post("/payments/create-checkout")
 async def create_checkout_session(
     request: Request,
-    package_id: str,
-    origin_url: str,
+    checkout_request: CreateCheckoutRequest,
     user: Optional[User] = Depends(get_current_user)
 ):
     """Create Stripe checkout session for premium subscription"""
