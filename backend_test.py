@@ -213,15 +213,15 @@ class BettyCrystalTester:
             email = f"test.user.{timestamp}@example.com"
             password = "testpassword123"
             
-            # Register user
-            register_params = {
+            # Register user with JSON body
+            register_data = {
                 "username": username,
                 "email": email,
                 "password": password
             }
             
             register_response = requests.post(f"{self.api_url}/auth/register", 
-                                            params=register_params, timeout=10)
+                                            json=register_data, timeout=10)
             
             if register_response.status_code != 200:
                 self.log_test("Create Test Session", False, 
@@ -229,14 +229,14 @@ class BettyCrystalTester:
                             register_response.text)
                 return False, None
             
-            # Now login to get session
-            login_params = {
+            # Now login to get session with JSON body
+            login_data = {
                 "username": username,
                 "password": password
             }
             
             login_response = requests.post(f"{self.api_url}/auth/login", 
-                                         params=login_params, timeout=10)
+                                         json=login_data, timeout=10)
             
             success = login_response.status_code == 200
             
