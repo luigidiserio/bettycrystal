@@ -185,6 +185,33 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE PAYMENT TESTING COMPLETE: All 8 payment integration tests passed (100% success rate). POST /api/payments/create-checkout working with valid package_id 'premium_monthly' ($9.99 USD), correctly rejects invalid packages and missing parameters. GET /api/payments/status/{session_id} successfully retrieves payment status (open/unpaid for new sessions), handles invalid sessions appropriately. POST /api/webhook/stripe endpoint accessible and requires Stripe signature as expected. Database integration verified - payment_transactions collection created with 6 records, storing session_id, amount, currency, payment_status, and metadata correctly. Anonymous user support confirmed - no authentication required for payment creation. Stripe integration using emergentintegrations.payments.stripe.checkout working with STRIPE_API_KEY=sk_test_emergent. All payment endpoints responding correctly with proper error handling."
+      - working: true
+        agent: "testing"
+        comment: "✅ USER-REPORTED ISSUES RESOLVED: Fixed LLM integration issue (UserMessage parameter changed from 'content' to 'text'). POST /api/payments/create-checkout now accepts JSON body format {'package_id': 'premium_monthly', 'origin_url': 'http://localhost:3000'} as specified in user report. Invalid package_id correctly returns error. All payment endpoints working with JSON request bodies."
+
+  - task: "Registration endpoint JSON body support"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ USER-REPORTED ISSUE RESOLVED: POST /api/auth/register now accepts JSON body format {'username': 'testuser', 'email': 'test@example.com', 'password': 'testpass'} as specified in user report. Successfully creates user accounts and returns proper response. Duplicate registration correctly returns 400 error. No more 422 validation errors."
+
+  - task: "AI prediction uniqueness and asset-specific analysis"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ USER-REPORTED ISSUE RESOLVED: Fixed LLM integration (UserMessage parameter issue). AI predictions now generate unique, asset-specific content. GET /api/predict/BTC?asset_type=crypto returns detailed Bitcoin analysis, GET /api/predict/ETH?asset_type=crypto returns unique Ethereum analysis, GET /api/predict/CADUSD?asset_type=currency returns Canadian Dollar specific analysis. Each prediction contains asset-specific reasoning, technical analysis, and market factors. No more identical content across different assets."
 
 frontend:
   - task: "Asset analysis charts display"
