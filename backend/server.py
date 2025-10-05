@@ -1572,8 +1572,8 @@ Provide a detailed prediction for:
 Be specific, actionable, and include timestamp context. Focus on technical and fundamental factors.
 Current date: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}"""
 
-            response = await chat.send_message(UserMessage(content=prompt))
-            ai_analysis = response.content
+            response = await chat.send_message(UserMessage(text=prompt))
+            ai_analysis = response
             
         except Exception as llm_error:
             logging.warning(f"LLM prediction failed: {llm_error}")
