@@ -640,6 +640,10 @@ class RegisterRequest(BaseModel):
 async def register_user(register_request: RegisterRequest):
     """Register a new user account"""
     try:
+        username = register_request.username
+        email = register_request.email  
+        password = register_request.password
+        
         # Check if user already exists
         existing_user = await db.users.find_one({"$or": [{"username": username}, {"email": email}]})
         if existing_user:
