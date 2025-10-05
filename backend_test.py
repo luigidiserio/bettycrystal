@@ -690,13 +690,13 @@ class BettyCrystalTester:
         """Test that payment system works for anonymous users (no authentication required)"""
         try:
             # Test without any authentication headers
-            payload = {
+            params = {
                 "package_id": "premium_monthly",
                 "origin_url": self.base_url
             }
             
             response = requests.post(f"{self.api_url}/payments/create-checkout", 
-                                   json=payload, timeout=15)
+                                   params=params, timeout=15)
             success = response.status_code == 200
             
             if success:
