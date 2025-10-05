@@ -377,8 +377,25 @@ function App() {
         setUser({
           ...userData,
           name: userData.username === 'demo' ? 'Demo User' : 'Betty Lover',
-          isPremium: userData.is_premium
+          emailVerified: userData.email_verified,
+          trialEndsAt: userData.trial_ends_at,
+          trialActive: true  // Will fetch actual status
         });
+        
+        // Fetch trial status
+        try {
+          const trialResponse = await axios.get(`${API}/auth/trial-status`, {
+            withCredentials: true
+          });
+          setUser(prev => ({
+            ...prev,
+            trialActive: trialResponse.data.trial_active,
+            daysRemaining: trialResponse.data.days_remaining,
+            emailVerified: trialResponse.data.email_verified
+          }));
+        } catch (trialError) {
+          console.log('Could not fetch trial status');
+        }
       } catch (error) {
         // No active session, user remains null
         console.log('No active session');
