@@ -50,7 +50,9 @@ class User(BaseModel):
     id: str = Field(alias="_id")
     username: str
     email: str
-    is_premium: bool = False
+    email_verified: bool = False
+    verification_token: Optional[str] = None
+    trial_ends_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(days=30))
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     class Config:
