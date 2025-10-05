@@ -647,14 +647,14 @@ class BettyCrystalTester:
         try:
             # This test checks if we can create a checkout and verify it creates a database record
             # We'll do this by creating a checkout and then checking the status
-            params = {
+            data = {
                 "package_id": "premium_monthly",
-                "origin_url": self.base_url
+                "origin_url": "http://localhost:3000"
             }
             
             # Create checkout
             checkout_response = requests.post(f"{self.api_url}/payments/create-checkout", 
-                                            params=params, timeout=15)
+                                            json=data, timeout=15)
             
             if checkout_response.status_code != 200:
                 self.log_test("Payment Database Verification", False, 
