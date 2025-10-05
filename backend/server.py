@@ -807,6 +807,9 @@ async def create_checkout_session(
 ):
     """Create Stripe checkout session for premium subscription"""
     try:
+        package_id = checkout_request.package_id
+        origin_url = checkout_request.origin_url
+        
         # Validate package
         if package_id not in PAYMENT_PACKAGES:
             raise HTTPException(status_code=400, detail="Invalid payment package")
