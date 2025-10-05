@@ -719,10 +719,11 @@ class BettyCrystalTester:
     def test_registration_endpoint_json(self):
         """Test registration endpoint with JSON body as specified in review request"""
         try:
-            # Test with exact JSON body from review request
+            # Test with JSON body format from review request (using unique username)
+            timestamp = int(datetime.now().timestamp())
             data = {
-                "username": "testuser",
-                "email": "test@example.com",
+                "username": f"testuser{timestamp}",
+                "email": f"test{timestamp}@example.com",
                 "password": "testpass"
             }
             
