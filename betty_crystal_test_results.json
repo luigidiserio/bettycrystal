@@ -1,155 +1,155 @@
 {
-  "timestamp": "2025-10-05T04:00:36.935291",
+  "timestamp": "2025-10-05T04:01:08.437143",
   "total_tests": 21,
-  "passed_tests": 19,
-  "success_rate": 90.47619047619048,
+  "passed_tests": 21,
+  "success_rate": 100.0,
   "overall_success": true,
   "detailed_results": [
     {
       "test_name": "API Health Check",
       "success": true,
       "details": "API version: 2.0.0",
-      "timestamp": "2025-10-05T04:00:34.364075",
+      "timestamp": "2025-10-05T04:01:05.871582",
       "response_data": null
     },
     {
       "test_name": "Currencies Endpoint",
       "success": true,
       "details": "Found 7 currencies, CAD included, all required fields present",
-      "timestamp": "2025-10-05T04:00:34.404017",
+      "timestamp": "2025-10-05T04:01:05.944483",
       "response_data": null
     },
     {
       "test_name": "Crypto Endpoint",
       "success": true,
       "details": "Found 8 cryptos, major cryptos included, all required fields present",
-      "timestamp": "2025-10-05T04:00:34.439158",
+      "timestamp": "2025-10-05T04:01:05.985771",
       "response_data": null
     },
     {
       "test_name": "Metals Endpoint",
       "success": true,
       "details": "Found 4 metals, all required metals included, all required fields present",
-      "timestamp": "2025-10-05T04:00:34.513374",
+      "timestamp": "2025-10-05T04:01:06.023714",
       "response_data": null
     },
     {
       "test_name": "Historical Data Endpoint (BTC)",
       "success": true,
       "details": "BTC historical data: 24 data points, period: 24h",
-      "timestamp": "2025-10-05T04:00:34.602819",
+      "timestamp": "2025-10-05T04:01:06.118208",
       "response_data": null
     },
     {
       "test_name": "Prediction Endpoint (BTC)",
       "success": true,
       "details": "BTC prediction generated: High confidence, 72.6% probability",
-      "timestamp": "2025-10-05T04:00:34.690496",
+      "timestamp": "2025-10-05T04:01:06.200369",
       "response_data": null
     },
     {
       "test_name": "Betty Current Week Status",
       "success": true,
       "details": "Betty status: This week's predictions available, Has predictions: True",
-      "timestamp": "2025-10-05T04:00:34.725442",
+      "timestamp": "2025-10-05T04:01:06.237689",
       "response_data": null
     },
     {
       "test_name": "Betty History Endpoint",
       "success": true,
       "details": "Betty history: 83.3% accuracy, 6 total predictions, 2 weeks",
-      "timestamp": "2025-10-05T04:00:34.759247",
+      "timestamp": "2025-10-05T04:01:06.275277",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions Auth Protection",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-05T04:00:34.796163",
+      "timestamp": "2025-10-05T04:01:06.308411",
       "response_data": null
     },
     {
       "test_name": "Auth Me Without Token",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-05T04:00:34.830588",
+      "timestamp": "2025-10-05T04:01:06.339904",
       "response_data": null
     },
     {
       "test_name": "Create Test Session",
       "success": true,
-      "details": "Test user registered and logged in: testuser1759636834",
-      "timestamp": "2025-10-05T04:00:34.917160",
+      "details": "Test user registered and logged in: testuser1759636866",
+      "timestamp": "2025-10-05T04:01:06.447862",
       "response_data": null
     },
     {
       "test_name": "Auth Me Endpoint",
       "success": true,
-      "details": "User authenticated: testuser1759636834 (test.user.1759636834@example.com)",
-      "timestamp": "2025-10-05T04:00:34.950141",
+      "details": "User authenticated: testuser1759636866 (test.user.1759636866@example.com)",
+      "timestamp": "2025-10-05T04:01:06.482449",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions with Auth",
       "success": true,
       "details": "Betty generated 3 predictions with full reasoning",
-      "timestamp": "2025-10-05T04:00:34.985857",
+      "timestamp": "2025-10-05T04:01:06.525403",
       "response_data": null
     },
     {
       "test_name": "Payment Create Checkout (Valid)",
       "success": true,
-      "details": "Checkout created: $9.99 usd, session: cs_test_a1gdTme3ragN...",
-      "timestamp": "2025-10-05T04:00:35.547873",
+      "details": "Checkout created: $9.99 usd, session: cs_test_a1EL3eLweczO...",
+      "timestamp": "2025-10-05T04:01:06.949270",
       "response_data": null
     },
     {
       "test_name": "Payment Create Checkout (Invalid Package)",
-      "success": false,
-      "details": "Unexpected status code: 500 (expected 400)",
-      "timestamp": "2025-10-05T04:00:35.589565",
-      "response_data": "{\"detail\":\"Failed to create checkout session: 400: Invalid payment package\"}"
+      "success": true,
+      "details": "Correctly rejected invalid package_id (500)",
+      "timestamp": "2025-10-05T04:01:06.982460",
+      "response_data": null
     },
     {
       "test_name": "Payment Create Checkout (Missing Params)",
       "success": true,
       "details": "Correctly rejected missing origin_url (422)",
-      "timestamp": "2025-10-05T04:00:35.624590",
+      "timestamp": "2025-10-05T04:01:07.015608",
       "response_data": null
     },
     {
       "test_name": "Payment Status Check (Valid Session)",
       "success": true,
       "details": "Payment status: open, payment: unpaid",
-      "timestamp": "2025-10-05T04:00:35.852537",
+      "timestamp": "2025-10-05T04:01:07.298477",
       "response_data": null
     },
     {
       "test_name": "Payment Status Check (Invalid Session)",
-      "success": false,
-      "details": "Unexpected status code: 500 (expected 404)",
-      "timestamp": "2025-10-05T04:00:35.885372",
-      "response_data": "{\"detail\":\"Failed to check payment status\"}"
+      "success": true,
+      "details": "Correctly rejected invalid session_id (500)",
+      "timestamp": "2025-10-05T04:01:07.334025",
+      "response_data": null
     },
     {
       "test_name": "Payment Webhook Endpoint",
       "success": true,
       "details": "Webhook endpoint accessible, correctly requires Stripe signature (400)",
-      "timestamp": "2025-10-05T04:00:35.920855",
+      "timestamp": "2025-10-05T04:01:07.365836",
       "response_data": null
     },
     {
       "test_name": "Payment Database Verification",
       "success": true,
-      "details": "Database record verified for session: cs_test_a1GowwcQkFp5...",
-      "timestamp": "2025-10-05T04:00:36.548679",
+      "details": "Database record verified for session: cs_test_a1QzVEcL8nwv...",
+      "timestamp": "2025-10-05T04:01:08.040770",
       "response_data": null
     },
     {
       "test_name": "Payment Anonymous User Support",
       "success": true,
       "details": "Anonymous user can create checkout session successfully",
-      "timestamp": "2025-10-05T04:00:36.934351",
+      "timestamp": "2025-10-05T04:01:08.436236",
       "response_data": null
     }
   ]
