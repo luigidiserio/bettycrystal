@@ -751,6 +751,17 @@ class BettyCrystalTester:
             auth_me_success = self.test_auth_me_endpoint(session_token)
             betty_predictions_success, predictions_data = self.test_betty_predictions_with_auth(session_token)
         
+        # Test Emergent Stripe Payment Integration
+        print("\n💳 Testing Emergent Stripe Payment Integration...")
+        payment_create_valid_success, payment_data = self.test_payment_create_checkout_valid()
+        payment_create_invalid_success = self.test_payment_create_checkout_invalid_package()
+        payment_create_missing_success = self.test_payment_create_checkout_missing_params()
+        payment_status_valid_success, status_data = self.test_payment_status_valid_session()
+        payment_status_invalid_success = self.test_payment_status_invalid_session()
+        payment_webhook_success = self.test_payment_webhook_endpoint()
+        payment_database_success = self.test_payment_database_verification()
+        payment_anonymous_success = self.test_payment_anonymous_user_support()
+        
         # Print summary
         print("=" * 60)
         print(f"🔮 Betty Crystal Test Summary: {self.tests_passed}/{self.tests_run} tests passed")
@@ -776,6 +787,16 @@ class BettyCrystalTester:
             critical_failures.append("Authentication system failed")
         if session_success and not betty_predictions_success:
             critical_failures.append("Betty's AI prediction generation failed")
+        
+        # Payment integration critical failures
+        if not payment_create_valid_success:
+            critical_failures.append("Payment checkout creation failed (core payment functionality)")
+        if not payment_status_valid_success:
+            critical_failures.append("Payment status check failed (payment tracking broken)")
+        if not payment_database_success:
+            critical_failures.append("Payment database integration failed (transactions not stored)")
+        if not payment_anonymous_success:
+            critical_failures.append("Anonymous payment support failed (blocks non-authenticated users)")
             
         if critical_failures:
             print("\n🚨 Critical Issues Found:")
