@@ -1196,8 +1196,8 @@ async def get_betty_current_week():
 
 # Premium authentication removed - using trial-based access instead
 
-@api_router.get("/betty/predictions", dependencies=[Depends(require_auth)])
-async def get_betty_predictions(user: User = Depends(require_auth)):
+@api_router.get("/betty/predictions", dependencies=[Depends(require_verified_user)])
+async def get_betty_predictions(user: User = Depends(require_verified_user)):
     """Get Betty's predictions for this week (requires authentication)"""
     try:
         current_monday = await get_monday_of_week()
