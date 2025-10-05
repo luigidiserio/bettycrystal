@@ -1,100 +1,156 @@
 {
-  "timestamp": "2025-10-04T21:09:36.502791",
-  "total_tests": 13,
-  "passed_tests": 13,
-  "success_rate": 100.0,
-  "overall_success": true,
+  "timestamp": "2025-10-05T03:59:47.593266",
+  "total_tests": 21,
+  "passed_tests": 15,
+  "success_rate": 71.42857142857143,
+  "overall_success": false,
   "detailed_results": [
     {
       "test_name": "API Health Check",
       "success": true,
       "details": "API version: 2.0.0",
-      "timestamp": "2025-10-04T21:09:36.366993",
+      "timestamp": "2025-10-05T03:59:45.109719",
       "response_data": null
     },
     {
       "test_name": "Currencies Endpoint",
       "success": true,
       "details": "Found 7 currencies, CAD included, all required fields present",
-      "timestamp": "2025-10-04T21:09:36.368288",
+      "timestamp": "2025-10-05T03:59:46.105188",
       "response_data": null
     },
     {
       "test_name": "Crypto Endpoint",
       "success": true,
       "details": "Found 8 cryptos, major cryptos included, all required fields present",
-      "timestamp": "2025-10-04T21:09:36.369407",
+      "timestamp": "2025-10-05T03:59:46.297915",
       "response_data": null
     },
     {
       "test_name": "Metals Endpoint",
       "success": true,
       "details": "Found 4 metals, all required metals included, all required fields present",
-      "timestamp": "2025-10-04T21:09:36.370488",
+      "timestamp": "2025-10-05T03:59:46.668084",
       "response_data": null
     },
     {
       "test_name": "Historical Data Endpoint (BTC)",
       "success": true,
       "details": "BTC historical data: 24 data points, period: 24h",
-      "timestamp": "2025-10-04T21:09:36.440157",
+      "timestamp": "2025-10-05T03:59:46.847101",
       "response_data": null
     },
     {
       "test_name": "Prediction Endpoint (BTC)",
       "success": true,
-      "details": "BTC prediction generated: Medium confidence, 57.4% probability",
-      "timestamp": "2025-10-04T21:09:36.488127",
+      "details": "BTC prediction generated: High confidence, 72.7% probability",
+      "timestamp": "2025-10-05T03:59:47.010321",
       "response_data": null
     },
     {
       "test_name": "Betty Current Week Status",
       "success": true,
       "details": "Betty status: This week's predictions available, Has predictions: True",
-      "timestamp": "2025-10-04T21:09:36.491555",
+      "timestamp": "2025-10-05T03:59:47.050636",
       "response_data": null
     },
     {
       "test_name": "Betty History Endpoint",
       "success": true,
       "details": "Betty history: 83.3% accuracy, 6 total predictions, 2 weeks",
-      "timestamp": "2025-10-04T21:09:36.493526",
+      "timestamp": "2025-10-05T03:59:47.085598",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions Auth Protection",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:09:36.494577",
+      "timestamp": "2025-10-05T03:59:47.118036",
       "response_data": null
     },
     {
       "test_name": "Auth Me Without Token",
       "success": true,
       "details": "Correctly requires authentication (401 Unauthorized)",
-      "timestamp": "2025-10-04T21:09:36.495505",
+      "timestamp": "2025-10-05T03:59:47.155238",
       "response_data": null
     },
     {
       "test_name": "Create Test Session",
       "success": true,
-      "details": "Test user registered and logged in: testuser1759612176",
-      "timestamp": "2025-10-04T21:09:36.499162",
+      "details": "Test user registered and logged in: testuser1759636787",
+      "timestamp": "2025-10-05T03:59:47.241759",
       "response_data": null
     },
     {
       "test_name": "Auth Me Endpoint",
       "success": true,
-      "details": "User authenticated: testuser1759612176 (test.user.1759612176@example.com)",
-      "timestamp": "2025-10-04T21:09:36.500798",
+      "details": "User authenticated: testuser1759636787 (test.user.1759636787@example.com)",
+      "timestamp": "2025-10-05T03:59:47.278935",
       "response_data": null
     },
     {
       "test_name": "Betty Predictions with Auth",
       "success": true,
       "details": "Betty generated 3 predictions with full reasoning",
-      "timestamp": "2025-10-04T21:09:36.502630",
+      "timestamp": "2025-10-05T03:59:47.320996",
       "response_data": null
+    },
+    {
+      "test_name": "Payment Create Checkout (Valid)",
+      "success": false,
+      "details": "Status code: 422",
+      "timestamp": "2025-10-05T03:59:47.359568",
+      "response_data": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"package_id\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"origin_url\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}"
+    },
+    {
+      "test_name": "Payment Create Checkout (Invalid Package)",
+      "success": false,
+      "details": "Unexpected status code: 422 (expected 400)",
+      "timestamp": "2025-10-05T03:59:47.394329",
+      "response_data": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"package_id\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"origin_url\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}"
+    },
+    {
+      "test_name": "Payment Create Checkout (Missing Params)",
+      "success": true,
+      "details": "Correctly rejected missing origin_url (422)",
+      "timestamp": "2025-10-05T03:59:47.428860",
+      "response_data": null
+    },
+    {
+      "test_name": "Payment Status Check (Valid Session)",
+      "success": false,
+      "details": "Status code: 500",
+      "timestamp": "2025-10-05T03:59:47.462571",
+      "response_data": "{\"detail\":\"Failed to check payment status\"}"
+    },
+    {
+      "test_name": "Payment Status Check (Invalid Session)",
+      "success": false,
+      "details": "Unexpected status code: 500 (expected 404)",
+      "timestamp": "2025-10-05T03:59:47.494081",
+      "response_data": "{\"detail\":\"Failed to check payment status\"}"
+    },
+    {
+      "test_name": "Payment Webhook Endpoint",
+      "success": true,
+      "details": "Webhook endpoint accessible, correctly requires Stripe signature (400)",
+      "timestamp": "2025-10-05T03:59:47.525148",
+      "response_data": null
+    },
+    {
+      "test_name": "Payment Database Verification",
+      "success": false,
+      "details": "Failed to create checkout for database test: 422",
+      "timestamp": "2025-10-05T03:59:47.559657",
+      "response_data": null
+    },
+    {
+      "test_name": "Payment Anonymous User Support",
+      "success": false,
+      "details": "Anonymous checkout failed: 422",
+      "timestamp": "2025-10-05T03:59:47.592352",
+      "response_data": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"package_id\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"origin_url\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}"
     }
   ]
 }
