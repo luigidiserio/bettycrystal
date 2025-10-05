@@ -1606,7 +1606,11 @@ async def get_betty_premium_insights(user: User = Depends(require_premium_auth))
         # Generate premium content using LLM
         llm_key = os.environ.get('EMERGENT_LLM_KEY')
         if llm_key:
-            chat = LlmChat(llm_key)
+            chat = LlmChat(
+                api_key=llm_key,
+                session_id=f"premium_insights_{user.id}_{datetime.now().timestamp()}",
+                system_message="You are Betty Crystal providing premium market insights."
+            ).with_model("openai", "gpt-4o")
             
             prompt = """You are Betty Crystal providing premium market insights. Generate exclusive content for premium subscribers including:
 
